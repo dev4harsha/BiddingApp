@@ -2,7 +2,7 @@ import React, {useState, useEffect} from 'react';
 import { Link } from 'react-router-dom';
 import {MdFingerprint} from 'react-icons/md';
 import {FaBars, FaTimes} from 'react-icons/fa';
-import { Button } from './Button';
+import { Button } from '../Button';
 import './Navbar.css';
 import {IconContext} from 'react-icons/lib'
 
@@ -52,7 +52,7 @@ function Navbar() {
                 </Link>
               </li>
               <li className="nav-item">
-                <Link to='/terms-and-conditions' className="nav-links" onClick={closeMobileMenu}>
+                <Link to='/terms' className="nav-links" onClick={closeMobileMenu}>
                   Terms and Conditions
                 </Link>
               </li>
@@ -62,12 +62,12 @@ function Navbar() {
                 </Link>
               </li>
               <li className="nav-item">
-                <Link to='/about-us' className="nav-links" onClick={closeMobileMenu}>
+                <Link to='/about' className="nav-links" onClick={closeMobileMenu}>
                   About Us
                 </Link>
               </li>
               <li className="nav-item">
-                <Link to='/contact-us' className="nav-links" onClick={closeMobileMenu}>
+                <Link to='/contact' className="nav-links" onClick={closeMobileMenu}>
                   Contact Us
                 </Link>
               </li>
@@ -83,7 +83,7 @@ function Navbar() {
                   </Link>
                 ) : (
                   <Link to='/sign-up' className="btn-link" onClick={closeMobileMenu}>
-                    <Button buttonStyle='btn--outline' buttonSize='btn-mobile'>
+                    <Button buttonStyle='btn--outline' buttonSize='btn--mobile'>
                       SIGN UP
                     </Button>
                   </Link>
