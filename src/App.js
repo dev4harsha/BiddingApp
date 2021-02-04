@@ -10,6 +10,7 @@ import Terms from './components/pages/terms/Terms';
 import Weblog from './components/pages/weblog/Weblog';
 import About from './components/pages/about/About';
 import Faq from './components/pages/faq/Faq';
+import 'fontsource-roboto';
 
 function App() {
   return (
