@@ -11,26 +11,34 @@ const useStyles = makeStyles((theme) => ({
     root: {
 
     },
+    container:{
+        paddingTop: theme.spacing(3)
+    }
    
     
   }));
 
 function Faq() {
     const classes = useStyles();
+    const [expanded, setExpanded] = React.useState('panel1');
+
+    const handleChange = (panel) => (event, newExpanded) => {
+      setExpanded(newExpanded ? panel : false);
+    };
     return (
         
-        <Container maxWidth="lg" className={classes.root}>
+        <Container maxWidth="lg" className={classes.container}>
             <Typography variant="h4" gutterBottom align='center'>
             Frequently Asked Questions
             </Typography>
 
-        <Accordion>
+        <Accordion expanded={expanded === 'panel1'} onChange={handleChange('panel1')}>
           <AccordionSummary
             expandIcon={<ExpandMoreIcon />}
             aria-controls="panel1a-content"
             id="panel1a-header"
           >
-          <Typography variant="h6">The rules and regulations of the website</Typography>
+          <Typography variant="body1">The rules and regulations of the website</Typography>
           </AccordionSummary>
           <AccordionDetails>
             <Typography>
@@ -39,13 +47,13 @@ function Faq() {
           </AccordionDetails>
         </Accordion>
 
-        <Accordion>
+        <Accordion expanded={expanded === 'panel2'} onChange={handleChange('panel2')}>
           <AccordionSummary
             expandIcon={<ExpandMoreIcon />}
             aria-controls="panel1a-content"
             id="panel1a-header"
           >
-          <Typography variant="h6">The rules and regulations of the website</Typography>
+          <Typography variant="body1">The rules and regulations of the website</Typography>
           </AccordionSummary>
           <AccordionDetails>
             <Typography>
@@ -54,13 +62,13 @@ function Faq() {
           </AccordionDetails>
         </Accordion>
 
-        <Accordion>
+        <Accordion expanded={expanded === 'panel3'} onChange={handleChange('panel3')}>
           <AccordionSummary
             expandIcon={<ExpandMoreIcon />}
             aria-controls="panel1a-content"
             id="panel1a-header"
           >
-          <Typography variant="h6">The rules and regulations of the website</Typography>
+          <Typography variant="body1">The rules and regulations of the website</Typography>
           </AccordionSummary>
           <AccordionDetails>
             <Typography>
@@ -69,13 +77,13 @@ function Faq() {
           </AccordionDetails>
         </Accordion>
 
-        <Accordion>
+        <Accordion expanded={expanded === 'panel4'} onChange={handleChange('panel4')}> 
           <AccordionSummary
             expandIcon={<ExpandMoreIcon />}
             aria-controls="panel1a-content"
             id="panel1a-header"
           >
-          <Typography variant="h6">The rules and regulations of the website</Typography>
+          <Typography variant="body1">The rules and regulations of the website</Typography>
           </AccordionSummary>
           <AccordionDetails>
             <Typography>

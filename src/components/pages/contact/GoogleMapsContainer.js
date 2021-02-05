@@ -34,14 +34,14 @@ class GoogleMapsContainer extends React.Component {
     const style = {
         width: '20vw',
         height: '30vh',
+        
         // 'marginLeft': 'auto',
         // 'marginRight': 'auto'
     }
     return (
     
       <Map
-        item
-        sm = { 12 }
+      
         style = { style }
         google = { this.props.google }
         onClick = { this.onMapClick }

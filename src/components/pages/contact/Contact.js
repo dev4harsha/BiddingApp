@@ -2,7 +2,8 @@ import React from 'react'
 import { makeStyles } from '@material-ui/core/styles';
 import { MdLocationOn, MdPhone, MdEmail } from "react-icons/md";
 import { Button, Container, Grid, Paper, TextField, Typography } from '@material-ui/core';
-import GoogleMap from './GoogleMap';
+import GoogleMap from './GoogleMapsContainer';
+import GoogleMapsContainer from './GoogleMapsContainer';
 
 
 
@@ -27,8 +28,10 @@ const useStyles = makeStyles((theme) => ({
             color: '#FFF',
             border: '3px solid #f00946'
         }
-        
     },
+    container:{
+        paddingTop: theme.spacing(3)
+    }
     
 
   }));
@@ -37,14 +40,14 @@ function Contact() {
     const classes = useStyles();
     return (
         
-        <Container maxWidth="lg"  className={classes.root}>
+        <Container maxWidth="lg"  className={classes.container}>
             
             <Typography variant="h4" gutterBottom align='center'>
                 Contact Us
             </Typography>
             <Grid container spacing={3}>
                 
-                <Grid item sm={12} md={6}>
+                <Grid item xs ={12} sm={12} md={6}>
                 <Paper className={classes.paper}>
                     <Typography variant="h5" gutterBottom align='center'>
                     Get in touch with us
@@ -62,7 +65,7 @@ function Contact() {
                     </form>
                 </Paper>
                 </Grid>
-                <Grid item sm={12} md={6}>
+                <Grid item xs={12} sm={12} md={6}>
                 <Paper className={classes.paper}>
                    
                     <Typography variant="h5" gutterBottom align='center'>
@@ -77,9 +80,9 @@ function Contact() {
                     <Typography variant="body1" gutterBottom align='left'>
                         <MdEmail/> Support@SamsysGroup.com.au
                     </Typography>
-                    <div>
-                         <GoogleMap/> 
-                    </div>
+                    
+                         <GoogleMapsContainer/> 
+                    
                 </Paper>
                 </Grid>
                 

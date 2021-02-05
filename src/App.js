@@ -11,9 +11,13 @@ import Weblog from './components/pages/weblog/Weblog';
 import About from './components/pages/about/About';
 import Faq from './components/pages/faq/Faq';
 import 'fontsource-roboto';
+import { ThemeProvider } from '@material-ui/core';
+import theme from './theme';
+import BlogPost from './components/pages/weblog/BlogPost';
 
 function App() {
   return (
+    <ThemeProvider theme={theme}>
     <Router>
       <Navbar/>
       <Switch>
@@ -24,9 +28,12 @@ function App() {
         <Route path='/weblog' component={Weblog} />
         <Route path='/about' component={About} />
         <Route path='/faq' component={Faq} />
+
+        <Route path='/BlogPost' component={BlogPost} />
       </Switch>
       <Footer />
     </Router>
+    </ThemeProvider>
   );
 }
 
