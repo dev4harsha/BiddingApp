@@ -5,7 +5,7 @@ import Contact from './components/pages/contact/Contact';
 import Footer from './components/footer/Footer';
 import Navbar from './components/header/Navbar';
 import Home from './components/pages/home/Home';
-import Auction from './components/pages/auction/Auction';
+import Auction from './components/pages/auction/AuctionCommon';
 import Terms from './components/pages/terms/Terms';
 import Weblog from './components/pages/weblog/Weblog';
 import About from './components/pages/about/About';
