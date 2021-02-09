@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { makeStyles } from '@material-ui/core/styles';
 import { Button } from '@material-ui/core/';
 
-import { Card, CardActionArea, CardActions, CardContent, CardMedia, Grid, Typography } from '@material-ui/core';
+import { Card, CardActionArea, CardActions, CardContent, CardMedia, Typography } from '@material-ui/core';
 import ShareIcon from '@material-ui/icons/Share';
 import ThumbDownAltIcon from '@material-ui/icons/ThumbDownAlt';
 import ThumbUpIcon from '@material-ui/icons/ThumbUp';
@@ -12,11 +12,15 @@ import { Redirect } from 'react-router-dom';
 
 const useStyles = makeStyles((theme) => ({
     root: {
-        maxWidth: "100%",
+        
     },
     media: {
-        height: 240,
-    },
+        height: 180,
+
+    },Card:{
+        maxWidth: "100%",
+        padding: theme.spacing(0.5),
+    }
     
 
 }));
@@ -31,7 +35,7 @@ function PostThum() {
     return (
         <>
             
-                <Card className={classes.Card}>
+                <Card className={classes.Card} onClick={()=> setViewPost(false)}>
                     <CardActionArea>
                         <CardMedia
                             className={classes.media}
@@ -52,7 +56,7 @@ function PostThum() {
                         </CardContent>
                     </CardActionArea>
                     <CardActions>
-                        <Button size="small" color="primary" onClick={()=> setViewPost(false)} >
+                        <Button size="small" color="primary"  >
                             <ShareIcon />
                         </Button>
                         <Button size="small" color="primary">

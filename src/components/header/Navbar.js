@@ -5,10 +5,21 @@ import {FaBars, FaTimes} from 'react-icons/fa';
 import { Button } from '../Button';
 import './Navbar.css';
 import {IconContext} from 'react-icons/lib'
+import SignUp from '../pages/userProfile/SignUp';
+import { Dialog, DialogContent, DialogTitle, TextField, DialogContentText, DialogActions } from '@material-ui/core';
 
 function Navbar() {
   const [click, setClick] = useState(false);
   const [button, setButton] = useState(true);
+  const [open, setOpen] = useState(false);
+
+  const handleOpen = ()=>{
+    setOpen(true);
+  }
+
+  const handleClose = () => {
+    setOpen(false);
+  };
 
   const handleClick = () => setClick(!click);
   const closeMobileMenu = () => setClick(false);
@@ -78,11 +89,12 @@ function Navbar() {
               </li>
               <li className="nav-btn">
                 {button ? (
-                  <Link to='/sign-up' className="btn-link" >
+                  <Link  className="btn-link" onClick={handleOpen}>
                     <Button buttonStyle='btn--outline'>SIGN UP</Button>
+                    
                   </Link>
                 ) : (
-                  <Link to='/sign-up' className="btn-link" onClick={closeMobileMenu}>
+                  <Link  className="btn-link" onClick={closeMobileMenu}>
                     <Button buttonStyle='btn--outline' buttonSize='btn--mobile'>
                       SIGN UP
                     </Button>
@@ -92,6 +104,34 @@ function Navbar() {
             </ul>
           </div>
       </div>
+
+      <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
+        <DialogTitle id="form-dialog-title">Subscribe</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            To subscribe to this website, please enter your email address here. We will send updates
+            occasionally.
+          </DialogContentText>
+          <TextField
+            autoFocus
+            margin="dense"
+            id="name"
+            label="Mobile Number"
+            type="email"
+            
+          />
+          <TextField
+            autoFocus
+            margin="dense"
+            id="name"
+            label="OTP Number"
+            type="email"
+            
+          />
+        </DialogContent>
+     
+      </Dialog>
+
       </IconContext.Provider>
       </>
     )

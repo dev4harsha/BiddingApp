@@ -2,7 +2,7 @@ import React from 'react'
 import { makeStyles } from '@material-ui/core/styles';
 
 
-import { CardContent, CardMedia, Container, Grid, Typography, CardActionArea, Paper } from '@material-ui/core';
+import { CardContent, CardMedia, Container, Grid, Typography, Paper } from '@material-ui/core';
 
 import PostThum from './PostThum';
 
@@ -27,8 +27,8 @@ function BlogPost() {
     return (
         <>
             <Container maxWidth="lg" className={classes.container}>
-                <Typography variant="h4" gutterBottom align='center'>
-                    Read article
+            <Typography variant="h4" gutterBottom align='center'>
+            Group of squamate reptiles, with over 6,000 species
             </Typography>
                 <Grid container spacing={3} >
                     <Grid item xs={12} sm={12} md={12} lg={8}>
@@ -53,6 +53,7 @@ function BlogPost() {
                         </Paper>
                     </Grid>
                     <Grid item xs={12} sm={12} md={12} lg={4}>
+                       
                         <Grid container spacing={3}>
                             <Grid item xs={12} sm={6} md={3} lg={12}>
                                 <PostThum />

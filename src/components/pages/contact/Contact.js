@@ -2,7 +2,7 @@ import React from 'react'
 import { makeStyles } from '@material-ui/core/styles';
 import { MdLocationOn, MdPhone, MdEmail } from "react-icons/md";
 import { Button, Container, Grid, Paper, TextField, Typography } from '@material-ui/core';
-import GoogleMap from './GoogleMapsContainer';
+
 import GoogleMapsContainer from './GoogleMapsContainer';
 
 
@@ -14,7 +14,7 @@ const useStyles = makeStyles((theme) => ({
           }
     },
     paper: {
-      padding: theme.spacing(2),
+      padding: theme.spacing(3),
       textAlign: 'center', 
     },
     
@@ -65,23 +65,30 @@ function Contact() {
                     </form>
                 </Paper>
                 </Grid>
-                <Grid item xs={12} sm={12} md={6}>
+                <Grid item xs={12} sm={12} md={6} alignItems='center'>
                 <Paper className={classes.paper}>
                    
-                    <Typography variant="h5" gutterBottom align='center'>
-                        Contact Us
-                    </Typography>
-                    <Typography variant="body1" gutterBottom align='left'>
-                        <MdLocationOn/> Queen Victoria Building NSW 1230
-                    </Typography>
-                    <Typography variant="body1" gutterBottom align='left'>
-                        <MdPhone/> 1300 438 968
-                    </Typography>
-                    <Typography variant="body1" gutterBottom align='left'>
-                        <MdEmail/> Support@SamsysGroup.com.au
-                    </Typography>
                     
-                         <GoogleMapsContainer/> 
+                        <Grid>
+                            <Typography variant="h5" gutterBottom align='center'>
+                            Contact Us
+                            </Typography>
+                            <Typography variant="body1" gutterBottom align='left'>
+                                <MdLocationOn/> Queen Victoria Building NSW 1230
+                            </Typography>
+                            <Typography variant="body1" gutterBottom align='left'>
+                                <MdPhone/> 1300 438 968
+                            </Typography>
+                            <Typography variant="body1" gutterBottom align='left'>
+                                <MdEmail/> Support@SamsysGroup.com.au
+                            </Typography>
+                        </Grid>
+                        <Grid sp={12}  style={{position: 'relative', height: '275px'}}>
+                        <GoogleMapsContainer/> 
+                        </Grid>
+                    
+                    
+                         
                     
                 </Paper>
                 </Grid>
