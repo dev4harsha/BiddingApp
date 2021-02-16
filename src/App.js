@@ -16,6 +16,7 @@ import { ThemeProvider } from '@material-ui/core';
 import theme from './theme';
 import BlogPost from './components/pages/weblog/BlogPost';
 import SignUp from './components/pages/userProfile/SignUp'
+import UserProfile from './components/pages/userProfile/UserProfile';
 
 function App() {
   return (
@@ -24,7 +25,7 @@ function App() {
       <Navbar/>
       <Switch>
         <Route path='/' exact component={Home}/>
-        
+        <Route path='/signUp' component={SignUp}/>
         <Route path='/contact' component={Contact} />
         <Route path='/auction' component={Auction} />
         <Route path='/terms' component={Terms} />
@@ -35,6 +36,7 @@ function App() {
         <Route path='/BlogPost' component={BlogPost} />
 
         <Route path='/bid' component={Bid}/>
+        <Route path='/user' component={UserProfile}/>
       </Switch>
       <Footer />
     </Router>

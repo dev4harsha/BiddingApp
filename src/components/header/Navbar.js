@@ -2,24 +2,16 @@ import React, {useState, useEffect} from 'react';
 import { Link } from 'react-router-dom';
 import {MdFingerprint} from 'react-icons/md';
 import {FaBars, FaTimes} from 'react-icons/fa';
-import { Button } from '../Button';
+//import { Button } from '../Button';
 import './Navbar.css';
 import {IconContext} from 'react-icons/lib'
 import SignUp from '../pages/userProfile/SignUp';
-import { Dialog, DialogContent, DialogTitle, TextField, DialogContentText, DialogActions } from '@material-ui/core';
+import { Button, Dialog, DialogContent, DialogTitle, TextField, DialogContentText, DialogActions, Avatar } from '@material-ui/core';
 
 function Navbar() {
   const [click, setClick] = useState(false);
   const [button, setButton] = useState(true);
-  const [open, setOpen] = useState(false);
-
-  const handleOpen = ()=>{
-    setOpen(true);
-  }
-
-  const handleClose = () => {
-    setOpen(false);
-  };
+ 
 
   const handleClick = () => setClick(!click);
   const closeMobileMenu = () => setClick(false);
@@ -45,7 +37,7 @@ function Navbar() {
           <div className="navbar-container container">
             <Link className="navbar-logo" onClick={closeMobileMenu}>
               <MdFingerprint className="navbar-icon"></MdFingerprint>
-                BID DOMAIN
+                BID
             </Link>
             <div className="menu-icon" onClick={handleClick}>
             {click ? <FaTimes/> : <FaBars/>}
@@ -64,7 +56,7 @@ function Navbar() {
               </li>
               <li className="nav-item">
                 <Link to='/terms' className="nav-links" onClick={closeMobileMenu}>
-                  Terms and Conditions
+                  Terms
                 </Link>
               </li>
               <li className="nav-item">
@@ -87,15 +79,21 @@ function Navbar() {
                   FAQ
                 </Link>
               </li>
+              <li className="nav-item">
+                <Link to='/user' className="nav-links" onClick={closeMobileMenu}>
+                
+                <Button   ><Avatar variant="contained" alt="Remy Sharp" src="/static/images/avatar/1.jpg" /></Button>
+                </Link>
+              </li>
               <li className="nav-btn">
                 {button ? (
-                  <Link  className="btn-link" onClick={handleOpen}>
-                    <Button buttonStyle='btn--outline'>SIGN UP</Button>
+                  <Link to='/SignUp' className="nav-links" >
+                    <Button  variant="contained" color="primary">SIGN UP</Button>
                     
                   </Link>
                 ) : (
-                  <Link  className="btn-link" onClick={closeMobileMenu}>
-                    <Button buttonStyle='btn--outline' buttonSize='btn--mobile'>
+                  <Link to='/SignUp' className="nav-links" onClick={closeMobileMenu}>
+                    <Button  variant="contained" color="primary">
                       SIGN UP
                     </Button>
                   </Link>
@@ -104,33 +102,6 @@ function Navbar() {
             </ul>
           </div>
       </div>
-
-      <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
-        <DialogTitle id="form-dialog-title">Subscribe</DialogTitle>
-        <DialogContent>
-          <DialogContentText>
-            To subscribe to this website, please enter your email address here. We will send updates
-            occasionally.
-          </DialogContentText>
-          <TextField
-            autoFocus
-            margin="dense"
-            id="name"
-            label="Mobile Number"
-            type="email"
-            
-          />
-          <TextField
-            autoFocus
-            margin="dense"
-            id="name"
-            label="OTP Number"
-            type="email"
-            
-          />
-        </DialogContent>
-     
-      </Dialog>
 
       </IconContext.Provider>
       </>

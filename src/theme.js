@@ -2,13 +2,13 @@ import { createMuiTheme} from '@material-ui/core/styles'
 
 const theme = createMuiTheme({
     palette:{
-        primary: {
-            main:"#764ac"
-        }
+        // primary: {
+        //     main:"#764ac"
+        // }
     },
-    backgrond:{
-        default: "#fff"
-    },
+    // backgrond:{
+    //     default: "#fff"
+    // },
     pageTopPadding:{
         paddingTop:"20px"
     }

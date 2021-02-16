@@ -1,6 +1,8 @@
 import React from 'react'
 import { Container, Typography, Paper } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles';
+import Feedbacks from '../home/Feedbacks';
+
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -40,7 +42,10 @@ function About() {
 Samsys Group is a Cisco, Citrix, Sophos, Fortinet, VMWare and Microsoft-focused company providing IT professional and managed services and solutions throughout Asia Pacific.  We help our customers across all industries, leveraging productivity and collaboration technologies to grow their businesses, increasing their efficiency and performance and fundamentally reducing overall day-to-day costs.  We aim to provide IT services of the highest standards to businesses across all industries.  Our team of experienced Australian based engineers ensures you will receive a first class service from people that are proficient, friendly and flexible.
                 </Typography>
             </Paper>
-           
+            <Typography className={classes.container} variant='h4' align='center'> 
+Customer Feedbacks
+            </Typography>
+            <Feedbacks/>
         </Container>
         
     )

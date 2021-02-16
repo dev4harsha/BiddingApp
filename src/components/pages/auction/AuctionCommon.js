@@ -21,17 +21,18 @@ const useStyles = makeStyles((theme) => ({
     },
     container:{
         paddingTop: theme.spacing(3)
-    },formButton:{
+    },
+    formButton:{
         margin: '8px',
         height:'30px',
         fontSize:'15px',
-        border: '2px solid #fff',
+        border: '1px solid #fff',
         borderRadius:'25px',
         backgroundColor:'#1c2237',
         '&:hover': {
             backgroundColor:'#1c2237',
             color: '#FFF',
-            border: '2px solid #f00946'
+            border: '1px solid #f00946'
         }
     },
     deviderStyl:{

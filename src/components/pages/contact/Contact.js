@@ -10,7 +10,7 @@ import GoogleMapsContainer from './GoogleMapsContainer';
 const useStyles = makeStyles((theme) => ({
     root: {
         '& .MuiTextField-root': {
-            margin: theme.spacing(1),
+            padding: theme.spacing(1),
           }
     },
     paper: {
@@ -23,10 +23,11 @@ const useStyles = makeStyles((theme) => ({
         height:'60px',
         fontSize:'20px',
         backgroundColor:'#1c2237',
+        border: '1px solid #fff',
         '&:hover': {
             backgroundColor:'#1c2237',
             color: '#FFF',
-            border: '3px solid #f00946'
+            border: '1px solid #f00946'
         }
     },
     container:{

@@ -10,7 +10,8 @@ import {
   FaLinkedin
 } from 'react-icons/fa';
 import { MdFingerprint } from 'react-icons/md';
-import { Button } from '../Button';
+import { Button } from '@material-ui/core';
+//import { Button } from '../Button';
 
 function Footer() {
   return (
@@ -30,7 +31,7 @@ function Footer() {
               type='email'
               placeholder='Your Email'
             />
-            <Button buttonStyle='btn--outline'>Subscribe</Button>
+            <Button variant="contained" color="primary">Subscribe</Button>
           </form>
         </div>
       </section>
