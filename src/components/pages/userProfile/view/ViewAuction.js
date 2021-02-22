@@ -13,8 +13,12 @@ import {
 import DateFnsUtils from '@date-io/date-fns';
 import { Edit, Delete } from '@material-ui/icons';
 import AddCircleIcon from '@material-ui/icons/AddCircle';
-import { getDomains, addDomain } from '../../../data/domainsData';
+
+
+import { addDomain, deleteDomain, getDomain, getDomains, updateDomain } from '../../../../data/domainsData';
 import DomainDialog from './DomainDialog';
+
+
 
 
 const useStyles = makeStyles((theme) => ({
@@ -78,7 +82,7 @@ function AddToAuction() {
     const [registrar, setRegistrar] = useState('');
     const [expires, setExpires] = useState('');
     const [bidamount, setBidamount] = useState('');
-    const [endDateTime, setEndDateTime] = useState(new Date('2014-08-18T21:11:54'));
+    const [endDateTime, setEndDateTime] = useState(new Date());
     const [loading, setLoading] = useState(false);
 
     const handleDomainname = (event) => {
@@ -129,14 +133,46 @@ function AddToAuction() {
 
         setOpen(true);
         setFormMode(true);
+        setDefault();
     }
 
-    const getOneDomain = (id) => {
-
+    const setDefault = () =>{
+        setDomainname('');
+        setDomaintype('');
+        setRegistrar('');
+        setAge('');
+        setBidamount('');
+        setEndDateTime(new Date());
+        setExpires('');
     }
 
-    const deleteHandler = (id) => {
+    const getOneDomain = async (id) => {
+        try {
+            setFormMode(false);
+            setDomId(id);
+            const response = await getDomain(id);
+            setDomainname(response.domainname);
+            setDomaintype(response.domaintype);
+            setRegistrar(response.registrar);
+            setAge(response.age);
+            setBidamount(response.bidamount);
+            setEndDateTime(response.endDateTime.toDate());
+            setExpires(response.expires);
+            setOpen(true);
 
+        } catch (error) {
+            toast.error(error.message);
+        }
+    }
+
+    const deleteHandler = async (id) => {
+        try {
+            await deleteDomain(id);
+            getlist();
+            toast.success('Domain Deleted Successfully');
+        } catch (error) {
+            toast.error(error.message);
+        }
     }
 
     const addDomainHandler = async () => {
@@ -147,28 +183,17 @@ function AddToAuction() {
             if (formMode) {
                 await addDomain(domain);
                 toast.success('Domain Added Successfully');
-                getlist();
                 setOpen(false);
-                setDomainname('');
-                setDomaintype('');
-                setRegistrar('');
-                setAge('');
-                setBidamount('');
-                setEndDateTime(new Date('2014-08-18T21:11:54'));
-                setExpires('');
+                getlist();
+                
+                setDefault();
 
             } else {
-                // await updateCustomer(custId, customer);
-                // toast.success('Customer Updated Successfully');
-                // getlist();
-                // setOpen(false);
-                // setFirstName('');
-                // setLastName('');
-                // setPhoneNumber('');
-                // setPostCode('');
-                // setCity('');
-                // setMaritalStatus('Single');
-                // setGender('Female'); 
+                await updateDomain(domId, domain);
+                toast.success('Domain Updated Successfully');
+                setOpen(false);
+                getlist();
+                setDefault(); 
             }
         } catch (error) {
             toast.error(error.message);

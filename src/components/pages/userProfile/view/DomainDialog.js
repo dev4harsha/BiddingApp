@@ -18,7 +18,7 @@ const DomainDialog = (props) => {
     return (
         <Dialog
             fullWidth={true}
-            maxWidth='lg'
+            maxWidth='sm'
             open={props.open}
             onClose={props.close}
             aria-labelledby="max-width-dialog-title"
@@ -114,7 +114,7 @@ const DomainDialog = (props) => {
                             />
                         </Grid>
                         <MuiPickersUtilsProvider utils={DateFnsUtils}>
-                            <Grid item xs={3}>
+                            <Grid item xs={6}>
                                 <KeyboardDatePicker
                                     fullWidth
                                     margin="normal"
@@ -128,7 +128,7 @@ const DomainDialog = (props) => {
                                     }}
                                 />
                             </Grid>
-                            <Grid item xs={3}>
+                            <Grid item xs={6}>
                                 <KeyboardTimePicker
                                     fullWidth
                                     margin="normal"

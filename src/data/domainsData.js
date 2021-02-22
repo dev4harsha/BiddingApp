@@ -1,11 +1,11 @@
-import firebase from '../helpers/db';
+import {db} from '../helpers/firebase';
 import Domain from '../models/domain';
 
-const firestore = firebase.firestore();
+
 
 export const getDomains = async () => {
     try{
-            const response = await firestore.collection('domains');
+            const response = await db.collection('domains');
             const data = await response.get();
             let array = [];
             data.forEach(doc =>{
@@ -30,7 +30,34 @@ export const getDomains = async () => {
 
 export const addDomain = async (domain) => {
     try {
-        await firestore.collection('domains').doc().set(domain);
+        await db.collection('domains').doc().set(domain);
+    } catch (error) {
+        throw error;
+    }
+}
+
+export const getDomain = async (id) => {
+    try {
+        const domain = await db.collection('domains').doc(id);
+        const data = await domain.get();
+        return data.data();
+    } catch (error) {
+        throw error;
+    }
+}
+
+export const updateDomain = async (id, data) => {
+    try {
+        const customer = await db.collection('domains').doc(id);
+        await customer.update(data)
+    } catch (error) {
+        throw error;
+    }
+}
+
+export const deleteDomain = async (id) => {
+    try {
+        await db.collection('domains').doc(id).delete();
     } catch (error) {
         throw error;
     }

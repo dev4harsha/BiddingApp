@@ -1,8 +1,15 @@
-import React, { useState } from 'react'
+import React, { useState, useContext } from 'react'
 import { makeStyles } from '@material-ui/core/styles';
+import firebase from 'firebase';
+
 
 
 import { Tab, Button, Container, Grid, Typography, TextField, Paper, Tabs } from '@material-ui/core';
+import { FaSignInAlt } from 'react-icons/fa';
+
+import { toast, ToastContainer } from 'react-toastify';
+import { signInWithGoogle } from '../../../../services/auth';
+import { UserContext } from '../../../../contexts/user';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -37,20 +44,25 @@ const useStyles = makeStyles((theme) => ({
 
 }));
 
-function SignUp() {
+const UserAuth = (props) => {
     const classes = useStyles();
     const [value, setValue] = React.useState(0);
-
-
+    const [user, setUser] = useContext(UserContext).user;
+   
     const handleChange = (event, newValue) => {
         setValue(newValue);
-
     };
-
-
+   
+    const signInbtnClick = async () =>{
+        let userBySignIn = await signInWithGoogle();
+        if(userBySignIn) setUser(userBySignIn); 
+    };
+    
     return (
         <>
+        
             <Container maxWidth="sm" className={classes.container}>
+            <ToastContainer />
                 <Grid item>
                     <Tabs
                         value={value}
@@ -71,7 +83,7 @@ function SignUp() {
                         <Paper className={classes.paper}>
                             <Typography variant="h5" gutterBottom align='center'>
                                 Create Account
-                    </Typography>
+                        </Typography>
 
                             <form className={classes.root} noValidate autoComplete="on">
 
@@ -97,10 +109,12 @@ function SignUp() {
                                     <TextField fullWidth id="otp" label="OPT Code" variant="outlined" />
                                     <Button fullWidth className={classes.formButton} variant="contained" color="primary">
                                         Login
-                    </Button>
+                                    </Button>
 
                                 </form>
-
+                                <Button fullWidth className={classes.formButton} variant="contained" color="primary" onClick={signInbtnClick}>
+                                        Login with Google
+                                </Button>
                             </Paper>
                         )
                     }
@@ -113,4 +127,4 @@ function SignUp() {
     )
 }
 
-export default SignUp;
+export default UserAuth;

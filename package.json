@@ -9,18 +9,23 @@
     "@material-ui/icons": "^4.11.2",
     "@material-ui/lab": "^4.0.0-alpha.57",
     "@material-ui/pickers": "^3.2.10",
+    "@react-firebase/auth": "^0.2.10",
+    "@react-firebase/firestore": "^0.5.5",
     "@react-google-maps/api": "^2.1.1",
     "@react-icons/all-files": "^4.1.0",
     "@testing-library/jest-dom": "^5.11.9",
     "@testing-library/react": "^11.2.3",
     "@testing-library/user-event": "^12.6.2",
     "date-fns": "^2.17.0",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
     "firebase": "^8.2.7",
     "fontsource-roboto": "^4.0.0",
     "google-maps-react": "^2.0.6",
     "infinite-react-carousel": "^1.2.11",
     "material-design-icons": "^3.0.1",
     "moment": "^2.29.1",
+    "node-modules": "^1.0.1",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "react-icon": "^1.0.0",
@@ -40,12 +45,6 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
-  },
   "browserslist": {
     "production": [
       ">0.2%",
@@ -57,5 +56,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "prettier": "2.2.1"
   }
 }

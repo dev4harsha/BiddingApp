@@ -1,49 +1,45 @@
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Link } from 'react-router-dom';
-import {MdFingerprint} from 'react-icons/md';
-import {FaBars, FaTimes} from 'react-icons/fa';
+import { MdFingerprint } from 'react-icons/md';
+import { FaBars, FaTimes } from 'react-icons/fa';
 //import { Button } from '../Button';
 import './Navbar.css';
-import {IconContext} from 'react-icons/lib'
-import SignUp from '../pages/userProfile/SignUp';
-import { Button, Dialog, DialogContent, DialogTitle, TextField, DialogContentText, DialogActions, Avatar } from '@material-ui/core';
+import { IconContext } from 'react-icons/lib'
 
-function Navbar() {
+import { Button, Dialog, DialogContent, DialogTitle, TextField, DialogContentText, DialogActions, Avatar } from '@material-ui/core';
+import { UserContext } from '../../contexts/user';
+import { logout } from '../../services/auth';
+
+const Navbar = () => {
   const [click, setClick] = useState(false);
-  const [button, setButton] = useState(true);
- 
+  const [user, setUser] = useContext(UserContext).user;
 
   const handleClick = () => setClick(!click);
   const closeMobileMenu = () => setClick(false);
 
-  const showButton = () => {
-    if(window.innerWidth <= 1250){
-      setButton(false);
-    } else{
-      setButton(true);
-    }
-  };
-  useEffect(() =>{
-    showButton();
-  },[]);
+  const signOutbtnClick = async () =>{
+    let userBySignOut = await logout();
+    if(userBySignOut) setUser(userBySignOut); 
+    console.log(userBySignOut);
+};
 
-  window.addEventListener('resize', showButton);
-  
 
-    return (
-      <>
-      <IconContext.Provider value={{ color: '#fff'}}>
-      <div className="navbar">
+  return (
+
+    <>
+
+      <IconContext.Provider value={{ color: '#fff' }}>
+        <div className="navbar">
           <div className="navbar-container container">
-            <Link className="navbar-logo" onClick={closeMobileMenu}>
+            <Link to='/' className="navbar-logo" onClick={closeMobileMenu}>
               <MdFingerprint className="navbar-icon"></MdFingerprint>
                 BID
             </Link>
             <div className="menu-icon" onClick={handleClick}>
-            {click ? <FaTimes/> : <FaBars/>}
+              {click ? <FaTimes /> : <FaBars />}
             </div>
 
-            <ul className={click ? 'nav-menu active ': 'nav-menu'}>
+            <ul className={click ? 'nav-menu active ' : 'nav-menu'}>
               <li className="nav-item">
                 <Link to='/' className="nav-links" onClick={closeMobileMenu}>
                   Home
@@ -79,33 +75,43 @@ function Navbar() {
                   FAQ
                 </Link>
               </li>
-              <li className="nav-item">
-                <Link to='/user' className="nav-links" onClick={closeMobileMenu}>
-                
-                <Button   ><Avatar variant="contained" alt="Remy Sharp" src="/static/images/avatar/1.jpg" /></Button>
-                </Link>
-              </li>
-              <li className="nav-btn">
-                {button ? (
-                  <Link to='/SignUp' className="nav-links" >
-                    <Button  variant="contained" color="primary">SIGN UP</Button>
-                    
+              {user ?
+                (
+                  <>
+                <li className="nav-item">
+                  <Link to='/user' className="nav-links" onClick={closeMobileMenu}>
+                    <Button ><Avatar variant="contained" alt="Remy Sharp" src={user.photoURL} /></Button>
                   </Link>
-                ) : (
-                  <Link to='/SignUp' className="nav-links" onClick={closeMobileMenu}>
-                    <Button  variant="contained" color="primary">
+                </li>
+                <li className="nav-btn">
+                  <Link to='/UserAuth' className="nav-links" onClick={closeMobileMenu}>
+                    <Button variant="contained" color="primary" onClick={signOutbtnClick}>
+                      LogOut
+                  </Button>
+                  </Link>
+                </li>
+                </>
+                )
+                :
+                (
+                <li className="nav-btn">
+                  <Link to='/UserAuth' className="nav-links" onClick={closeMobileMenu}>
+                    <Button variant="contained" color="primary">
                       SIGN UP
-                    </Button>
+                  </Button>
                   </Link>
-                )}
-              </li>
+                </li>
+                )
+              }
+
+
             </ul>
           </div>
-      </div>
+        </div>
 
       </IconContext.Provider>
-      </>
-    )
+    </>
+  )
 }
 
 export default Navbar
