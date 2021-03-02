@@ -16,6 +16,7 @@ exports.getAllDomains = (req, res) => {
           expires: doc.data().expires,
           endDateTime: doc.data().endDateTime,
           domaintype: doc.data().domaintype,
+          bids: doc.data().bids,
           age: doc.data().age,
         });
       });
@@ -42,6 +43,7 @@ exports.getAuthUserAllDomains = (req, res) => {
           domaintype: doc.data().domaintype,
           age: doc.data().age,
           active: doc.data().active,
+          bids: doc.data().bids,
         });
       });
       return res.json(domains);
@@ -61,6 +63,7 @@ exports.postOneDomain = (req, res) => {
     userId: req.user.uid,
     active: true,
     maxBid: 0,
+    bids: 0,
   };
   db.collection('domains')
     .add(newDomain)
@@ -89,7 +92,7 @@ exports.getDomain = (req, res) => {
         .get();
     })
     .then((data) => {
-      domainData.bids = [];
+      domainData.bidsData = [];
       data.forEach((doc) => {
         domainData.bids.push(doc.data());
       });
@@ -111,11 +114,15 @@ exports.bidOnDomain = (req, res) => {
     userImage: req.user.imageUrl,
   };
 
-  db.doc(`/domains/${req.params.domainId}`)
+  const domainDocument = db.doc(`/domains/${req.params.domainId}`);
+  let domainData;
+  domainDocument
     .get()
     .then((doc) => {
       if (!doc.exists) {
         return res.status(404).json({ error: 'Domain not found!' });
+      } else {
+        domainData = doc.data();
       }
       if (!doc.data().active) {
         return res
@@ -139,19 +146,34 @@ exports.bidOnDomain = (req, res) => {
         .get()
         .then((data) => {
           //return res.json(data.docs[0].id);
+          //console.log(data.docs[0].id);
           if (data.empty) {
-            return db.collection('bids').add(newBid);
+            let bidId = data.docs[0].id;
+            return db
+              .collection('bids')
+              .add(newBid)
+              .then(() => {
+                //domainData.bids++;
+                doc.ref.update({
+                  bids: doc.data().bids + 1,
+                  bidId: bidId,
+                });
+              });
           }
 
           return db
             .doc(`/bids/${data.docs[0].id}`)
-            .update({ bidAmount: req.body.bidAmount });
+            .update({ bidAmount: req.body.bidAmount })
+            .then(() => {
+              //return db.doc(`/domains/${req.params.domainId}`)
+              //console.log(data.id);
+              doc.ref.update({
+                maxBid: req.body.bidAmount,
+                bidId: data.docs[0].id,
+              });
+            });
         })
-        .then(() => {
-          return db
-            .doc(`/domains/${req.params.domainId}`)
-            .update({ maxBid: req.body.bidAmount });
-        })
+
         .then(() => {
           return res.json(newBid);
         })
