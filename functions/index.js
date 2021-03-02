@@ -16,6 +16,8 @@ const {
   getDomain,
   bidOnDomain,
   getAuthUserAllDomains,
+  activeDeactiveDomain,
+  deleteDomain,
 } = require('./handler/domins');
 const {
   signup,
@@ -29,10 +31,12 @@ const {
 app.get('/domains', getAllDomains);
 app.get('/domain/:domainId', getDomain);
 
-//auth user
+//auth user domain
 app.get('/userDomains', FBAuth, getAuthUserAllDomains);
 app.post('/domain', FBAuth, postOneDomain);
 app.post('/domian/:domainId/bid', FBAuth, bidOnDomain);
+app.get('/domian/:domainId/activeDeactive', FBAuth, activeDeactiveDomain);
+app.get('/domian/:domainId/', FBAuth, deleteDomain);
 
 //blogPost
 app.post('/blogPost', FBAuth, postOneBlog);

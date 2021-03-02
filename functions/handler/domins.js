@@ -1,3 +1,4 @@
+const { doc } = require('prettier');
 const { db, admin } = require('../util/admin');
 
 exports.getAllDomains = (req, res) => {
@@ -61,7 +62,7 @@ exports.postOneDomain = (req, res) => {
     endDateTime: admin.firestore.Timestamp.fromDate(new Date()), //req.body.endDateTime, //admin.firestore.Timestamp.fromDate(new Date()),
     expires: admin.firestore.Timestamp.fromDate(new Date()), //req.body.expires, //admin.firestore.Timestamp.fromDate(new Date()),
     userId: req.user.uid,
-    active: true,
+    active: false,
     maxBid: 0,
     bids: 0,
   };
@@ -73,6 +74,34 @@ exports.postOneDomain = (req, res) => {
     .catch((err) => {
       res.status(500).json({ error: 'somthing went wrong' });
       console.log(err);
+    });
+};
+exports.activeDeactiveDomain = (req, res) => {
+  let status;
+
+  db.doc(`/domains/${req.params.domainId}`)
+    .get()
+    .then((doc) => {
+      if (!doc.exists) {
+        return res.status(400).json({ error: 'Domain not found!' });
+      }
+
+      if (doc.data().userId !== req.user.uid) {
+        return res.status(400).json({
+          error: `Not allowed to change ${doc.data().domainname} domain status`,
+        });
+      } else {
+        status = !doc.data().active;
+        return doc.ref.update({ active: status }).then(() => {
+          return res.json({
+            message: `Domain ${status ? 'Deactivated' : 'Ativated'}`,
+          });
+        });
+      }
+    })
+    .catch((err) => {
+      console.error(err);
+      res.status(500).json({ error: err.code });
     });
 };
 exports.getDomain = (req, res) => {
@@ -111,7 +140,6 @@ exports.bidOnDomain = (req, res) => {
     domainId: req.params.domainId,
     userId: req.user.uid,
     userName: req.user.email,
-    userImage: req.user.imageUrl,
   };
 
   const domainDocument = db.doc(`/domains/${req.params.domainId}`);
@@ -185,5 +213,31 @@ exports.bidOnDomain = (req, res) => {
     .catch((err) => {
       console.log(err);
       return res.status(500).json({ error: 'Somthing went wrong' });
+    });
+};
+exports.deleteDomain = (req, res) => {
+  const documnet = db.doc(`/domains/${req.params.domainId}`);
+  documnet
+    .get()
+    .then((doc) => {
+      if (!doc.exists) {
+        return res.status(404).json({ error: 'Domain not found' });
+      }
+      if (doc.data().userId !== req.user.uid) {
+        return res.status(404).json({ error: 'Unauthorized' });
+      }
+      if (doc.data().bids > 0) {
+        return res.status(404).json({
+          error: `Can not delete, ${doc.data().bids} bids available`,
+        });
+      }
+      return documnet.delete();
+    })
+    .then(() => {
+      return res.json({ message: 'Domain deleted successfully' });
+    })
+    .catch((err) => {
+      console.error(err);
+      return res.status(500).json({ error: err.code });
     });
 };

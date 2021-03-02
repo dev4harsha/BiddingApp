@@ -231,7 +231,6 @@ exports.likePost = (req, res) => {
     .collection('likes')
     .where('userId', '==', req.user.uid)
     .where('postId', '==', req.params.postId)
-    .where('like', '==', trueOrFalseLike)
     .limit(1);
   const postDocument = db.doc(`/blogPosts/${req.params.postId}`);
   let postData;
@@ -268,22 +267,41 @@ exports.likePost = (req, res) => {
             return res.json(postData);
           });
       } else {
-        return db
-          .doc(`/likes/${data.docs[0].id}`)
-          .delete()
-          .then(() => {
-            if (trueOrFalseLike) {
+        const likeDoc = db.doc(`/likes/${data.docs[0].id}`);
+
+        if (data.docs[0].data().like) {
+          if (trueOrFalseLike) {
+            return likeDoc.delete().then(() => {
               postData.likes--;
-              return postDocument.update({ likes: postData.likes });
-            } else {
+              postDocument.update({ likes: postData.likes });
+            });
+          } else {
+            return likeDoc.update({ like: trueOrFalseLike }).then(() => {
+              postDocument.update({
+                likes: postData.likes - 1,
+                unlikes: postData.unlikes + 1,
+              });
+            });
+          }
+        } else {
+          if (!trueOrFalseLike) {
+            return likeDoc.delete().then(() => {
               postData.unlikes--;
-              return postDocument.update({ unlikes: postData.unlikes });
-            }
-          })
-          .then(() => {
-            return res.json(postData);
-          });
+              postDocument.update({ unlikes: postData.unlikes });
+            });
+          } else {
+            return likeDoc.update({ like: trueOrFalseLike }).then(() => {
+              postDocument.update({
+                likes: postData.likes + 1,
+                unlikes: postData.unlikes - 1,
+              });
+            });
+          }
+        }
       }
+    })
+    .then(() => {
+      return res.json(postData);
     })
     .catch((err) => {
       return res.status(400).json({ error: err.code });
