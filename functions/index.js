@@ -1,4 +1,5 @@
 const functions = require('firebase-functions');
+const { db } = require('./util/admin');
 
 const express = require('express');
 const app = express();
@@ -51,4 +52,27 @@ app.post('/user/image', FBAuth, uploadImage);
 app.post('/user/', FBAuth, addUserDetails);
 app.get('/user', FBAuth, getAuthenticatedUser);
 
+
 exports.api = functions.https.onRequest(app);
+exports.createNotificationOnDomain = functions.firestore
+  .document('/bids/{id}')
+  .onCreate((snapshot) => {
+    db.doc(`/domains/${snapshot.data().domainId}`)
+      .get()
+      .then((doc) => {
+        if (doc.exists && doc.data().userId !== snapshot.data().userId) {
+          return db.doc(`/notifications/${snapshot.id}`).set({
+            createdAt: new Date().toISOString(),
+            recipient: doc.data().userId,
+            sender: snapshot.data().userId,
+            type: 'bids',
+            read: false,
+            postId: doc.id,
+          });
+        }
+      })
+      .catch((err) => {
+        console.error(err);
+        return;
+      });
+  });

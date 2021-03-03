@@ -176,7 +176,7 @@ exports.bidOnDomain = (req, res) => {
           //return res.json(data.docs[0].id);
           //console.log(data.docs[0].id);
           if (data.empty) {
-            let bidId = data.docs[0].id;
+            let maxBidId = data.docs[0].id;
             return db
               .collection('bids')
               .add(newBid)
@@ -184,7 +184,7 @@ exports.bidOnDomain = (req, res) => {
                 //domainData.bids++;
                 doc.ref.update({
                   bids: doc.data().bids + 1,
-                  bidId: bidId,
+                  maxBidId: maxBidId,
                 });
               });
           }
@@ -197,7 +197,7 @@ exports.bidOnDomain = (req, res) => {
               //console.log(data.id);
               doc.ref.update({
                 maxBid: req.body.bidAmount,
-                bidId: data.docs[0].id,
+                maxBidId: data.docs[0].id,
               });
             });
         })
