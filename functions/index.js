@@ -4,6 +4,7 @@ const { db } = require('./util/admin');
 const express = require('express');
 const app = express();
 const FBAuth = require('./util/fbAuth');
+
 const {
   postOneBlog,
   getAllBlogPosts,
@@ -26,6 +27,7 @@ const {
   uploadImage,
   addUserDetails,
   getAuthenticatedUser,
+  markNotificationsRead,
 } = require('./handler/user');
 
 //common
@@ -49,27 +51,49 @@ app.get('/post/:postId/like/:trueOrFalse', FBAuth, likePost);
 app.post('/signup', signup);
 app.post('/login', login);
 app.post('/user/image', FBAuth, uploadImage);
-app.post('/user/', FBAuth, addUserDetails);
+app.post('/user', FBAuth, addUserDetails);
 app.get('/user', FBAuth, getAuthenticatedUser);
-
+app.post('/notifications', FBAuth, markNotificationsRead);
 
 exports.api = functions.https.onRequest(app);
+
 exports.createNotificationOnDomain = functions.firestore
-  .document('/bids/{id}')
-  .onCreate((snapshot) => {
-    db.doc(`/domains/${snapshot.data().domainId}`)
+  .document('bids/{id}')
+  .onWrite((snapshot) => {
+    const notificaionData = {
+      createdAt: new Date().toISOString(),
+      type: 'bids',
+      read: false,
+    };
+
+    return db
+      .doc(`/domains/${snapshot.after.data().domainId}`)
       .get()
       .then((doc) => {
-        if (doc.exists && doc.data().userId !== snapshot.data().userId) {
-          return db.doc(`/notifications/${snapshot.id}`).set({
-            createdAt: new Date().toISOString(),
-            recipient: doc.data().userId,
-            sender: snapshot.data().userId,
-            type: 'bids',
-            read: false,
-            postId: doc.id,
-          });
-        }
+        if (doc.data().bids > 1) {
+          notificaionData.sender = snapshot.after.data().userId;
+          notificaionData.domainId = snapshot.after.data().domainId;
+          notificaionData.message = `New bid added ${
+            snapshot.after.data().bidAmount
+          } on ${doc.data().domainname}`;
+          notificaionData.bidId = snapshot.after.id;
+          const batch = db.batch();
+          return db
+            .collection('bids')
+            .where('domainId', '==', snapshot.after.data().domainId)
+            .where('userId', '!=', snapshot.after.data().userId)
+            .get()
+            .then((data) => {
+              data.forEach((doc) => {
+                notificaionData.recipient = doc.data().userId;
+                console.log(doc.data().userId);
+                console.log(notificaionData);
+                var docRef = db.collection('notifications').doc(); //automatically generate unique id
+                batch.set(docRef, notificaionData);
+              });
+              return batch.commit();
+            });
+        } else return flase;
       })
       .catch((err) => {
         console.error(err);

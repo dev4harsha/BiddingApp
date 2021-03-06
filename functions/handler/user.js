@@ -93,6 +93,8 @@ exports.getAuthenticatedUser = (req, res) => {
       if (doc.exists) {
         userData.credentials = doc.data();
         return db.collection('likes').where('userId', '==', req.user.uid).get();
+      } else {
+        return res.status(404).json({ error: 'user not found' });
       }
     })
     .then((data) => {
@@ -114,9 +116,11 @@ exports.getAuthenticatedUser = (req, res) => {
           recipient: doc.data().recipient,
           sender: doc.data().sender,
           createdAt: doc.data().createdAt,
-          biId: doc.data().bidId,
+          bidId: doc.data().bidId,
           type: doc.data().type,
           read: doc.data().read,
+          domainId: doc.data().domainId,
+          message: doc.data().message,
           notificationId: doc.id,
         });
       });
@@ -183,4 +187,20 @@ exports.uploadImage = (req, res) => {
       });
   });
   busboy.end(req.rawBody);
+};
+exports.markNotificationsRead = (req, res) => {
+  let batch = db.batch();
+  req.body.forEach((notificationId) => {
+    const notification = db.doc(`/notifications/${notificationId}`);
+    batch.update(notification, { read: true });
+  });
+  batch
+    .commit()
+    .then(() => {
+      return res.json({ message: 'Notifications marked read' });
+    })
+    .catch((err) => {
+      console.error(err);
+      return res.status(500).json({ error: err.code });
+    });
 };

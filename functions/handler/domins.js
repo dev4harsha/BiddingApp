@@ -173,18 +173,18 @@ exports.bidOnDomain = (req, res) => {
         .limit(1)
         .get()
         .then((data) => {
-          //return res.json(data.docs[0].id);
+          // return res.json(data.docs[0].id);
           //console.log(data.docs[0].id);
           if (data.empty) {
-            let maxBidId = data.docs[0].id;
             return db
               .collection('bids')
               .add(newBid)
-              .then(() => {
+              .then((data) => {
                 //domainData.bids++;
                 doc.ref.update({
                   bids: doc.data().bids + 1,
-                  maxBidId: maxBidId,
+                  maxBidId: data.id,
+                  maxBid: req.body.bidAmount,
                 });
               });
           }

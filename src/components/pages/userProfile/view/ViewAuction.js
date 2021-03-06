@@ -76,10 +76,6 @@ const useStyles = makeStyles((theme) => ({
 function AddToAuction() {
   const classes = useStyles();
   const [domains, setDomains] = useState([]);
-  // const [selectedDate, setSelectedDate] = React.useState(new Date('2014-08-18T21:11:54'));
-  // const handleDateChange = (date) => {
-  //     setSelectedDate(date);
-  // };
   const [open, setOpen] = useState(false);
   const [formMode, setFormMode] = useState(true);
   const [domId, setDomId] = useState('');
@@ -115,16 +111,20 @@ function AddToAuction() {
     setEndDateTime(date);
   };
 
-  const getlist = async () => {
-    try {
-      setLoading(true);
-      const list = await getDomains();
-      setDomains(list);
-      setLoading(false);
-    } catch (error) {
-      toast.error(error.message);
-      setLoading(false);
-    }
+  const getlist = () => {
+    setLoading(true);
+    axios
+      .get('/domains')
+      .then((res) => {
+        console.log(res.data);
+        setLoading(false);
+        setDomains(res.data);
+      })
+      .catch((err) => {
+        setLoading(false);
+        console.log(err);
+        toast.error(error.message);
+      });
   };
   const override = `
         display: flex;

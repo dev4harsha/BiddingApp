@@ -210,19 +210,19 @@ exports.postUpdateBlog = (req, res) => {
   busboy.end(req.rawBody);
 };
 
-updatePostData = (updateData, postId, res) => {
-  db.doc(`/blogPosts/${postId}`)
-    .update(updateData)
-    .then((doc) => {
-      return res.json({
-        message: `Blog post ${updateData.title} updated successfully `,
-      });
-    })
-    .catch((err) => {
-      return res.status(500).json({ error: 'blog post update failed ' });
-      console.log(err);
-    });
-};
+// exports.updatePostData = (updateData, postId, res) => {
+//   db.doc(`/blogPosts/${postId}`)
+//     .update(updateData)
+//     .then((doc) => {
+//       return res.json({
+//         message: `Blog post ${updateData.title} updated successfully `,
+//       });
+//     })
+//     .catch((err) => {
+//       return res.status(500).json({ error: 'blog post update failed ' });
+//       console.log(err);
+//     });
+// };
 
 exports.likePost = (req, res) => {
   const trueOrFalseLike = req.params.trueOrFalse == 'true' ? true : false;
