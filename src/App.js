@@ -1,23 +1,23 @@
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import './App.css';
-import Contact from './components/pages/contact/Contact';
+import Contact from './pages/contact/Contact';
 import Footer from './components/footer/Footer';
 import Navbar from './components/header/Navbar';
-import Home from './components/pages/home/Home';
-import Auction from './components/pages/auction/Auction';
-import Terms from './components/pages/terms/Terms';
-import Weblog from './components/pages/weblog/Weblog';
-import About from './components/pages/about/About';
-import Faq from './components/pages/faq/Faq';
-import Bid from './components/pages/auction/bid/Bid';
+import Home from './pages/home/Home';
+import Auction from './pages/auction/Auction';
+import Terms from './pages/terms/Terms';
+import Weblog from './pages/weblog/Weblog';
+import About from './pages/about/About';
+import Faq from './pages/faq/Faq';
+import Bid from './pages/auction/bid/Bid';
 import 'fontsource-roboto';
 import { Container, ThemeProvider } from '@material-ui/core';
 import theme from './theme';
-import BlogPost from './components/pages/weblog/BlogPost';
-import UserProfile from './components/pages/userProfile/view/UserProfile';
+import BlogPost from './pages/weblog/BlogPost';
+import UserProfile from './pages/userProfile/UserProfile';
 import 'react-toastify/dist/ReactToastify.css';
 import { useState, useEffect } from 'react';
-import UserAuth from './components/pages/userProfile/view/UserAuth';
+import UserAuth from './pages/userProfile/UserAuth';
 
 require('dotenv').config();
 

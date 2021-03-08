@@ -60,5 +60,5 @@
     ]
   },
   "devDependencies": {},
-  "proxy": "http://localhost:5000/biddomain-4d43d/us-central1/ap"
+  "proxy": "http://localhost:5000/biddomain-4d43d/us-central1/api"
 }

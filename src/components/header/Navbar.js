@@ -102,7 +102,7 @@ const Navbar = () => {
                   onClick={closeMobileMenu}
                 >
                   <Button>
-                    <Avatar variant="contained" alt="Remy Sharp" src="" />
+                    <Avatar variant="circular" alt="Remy Sharp" src="" />
                   </Button>
                 </Link>
               </li>

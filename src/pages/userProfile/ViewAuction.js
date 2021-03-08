@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import axios from 'axios';
 import { makeStyles } from '@material-ui/core/styles';
 import { ToastContainer, toast } from 'react-toastify';
 import { ScaleLoader } from 'react-spinners';
@@ -22,14 +23,7 @@ import {
   Table,
 } from '@material-ui/core';
 
-import {
-  MuiPickersUtilsProvider,
-  KeyboardTimePicker,
-  KeyboardDatePicker,
-} from '@material-ui/pickers';
-import DateFnsUtils from '@date-io/date-fns';
 import { Edit, Delete } from '@material-ui/icons';
-import AddCircleIcon from '@material-ui/icons/AddCircle';
 
 import DomainDialog from './DomainDialog';
 
@@ -123,7 +117,7 @@ function AddToAuction() {
       .catch((err) => {
         setLoading(false);
         console.log(err);
-        toast.error(error.message);
+        toast.error(err.message);
       });
   };
   const override = `
