@@ -1,7 +1,8 @@
-import React from 'react';
-import { makeStyles } from '@material-ui/core/styles';
+import React, { Component } from 'react';
 import firebase from 'firebase';
-
+import axios from 'axios';
+import PropTypes from 'prop-types';
+import withStyles from '@material-ui/core/styles/withStyles';
 import {
   Tab,
   Button,
@@ -13,10 +14,12 @@ import {
   Tabs,
 } from '@material-ui/core';
 import { FaSignInAlt } from 'react-icons/fa';
-
 import { toast, ToastContainer } from 'react-toastify';
+//Redux
+import { connect } from 'react-redux';
+import { loginUser, signupUser } from '../../redux/actions/userActions';
 
-const useStyles = makeStyles((theme) => ({
+const styles = (theme) => ({
   root: {
     '& .MuiTextField-root': {
       margin: theme.spacing(1),
@@ -25,7 +28,6 @@ const useStyles = makeStyles((theme) => ({
   container: {
     paddingTop: theme.spacing(3),
   },
-
   formButton: {
     margin: '8px',
     height: '60px',
@@ -42,26 +44,72 @@ const useStyles = makeStyles((theme) => ({
     padding: theme.spacing(3),
     textAlign: 'center',
   },
-}));
+  customError: {
+    color: 'red',
+    marginTop: '10px',
+  },
+});
 
-const UserAuth = (props) => {
-  const classes = useStyles();
-  const [value, setValue] = React.useState(0);
-
-  const handleChange = (event, newValue) => {
-    setValue(newValue);
+class UserAuth extends Component {
+  constructor() {
+    super();
+    this.state = {
+      email: '',
+      password: '',
+      confirmPassword: '',
+      errors: {},
+      tabValue: 0,
+    };
+  }
+  //const [value, setValue] = useState(0);
+  handleChangeTab = (event, newValue) => {
+    this.setState({ tabValue: newValue });
   };
 
-  const signInbtnClick = async () => {};
+  handleChange = (event) => {
+    this.setState({
+      [event.target.name]: event.target.value,
+    });
+  };
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.UI.errors) {
+      this.setState({ errors: nextProps.UI.errors });
+    }
+  }
 
-  return (
-    <>
+  signInOnSubmit = (event) => {
+    event.preventDefault();
+    const userData = {
+      email: this.state.email,
+      password: this.state.password,
+    };
+    this.props.loginUser(userData, this.props.history);
+  };
+
+  signUpOnSubmit = (event) => {
+    event.preventDefault();
+    const NewUserData = {
+      email: this.state.email,
+      password: this.state.password,
+      confirmPassword: this.state.confirmPassword,
+    };
+    this.props.signupUser(NewUserData, this.props.history);
+  };
+
+  render() {
+    const {
+      classes,
+      UI: { loading },
+    } = this.props;
+    const { errors } = this.state;
+
+    return (
       <Container maxWidth="sm" className={classes.container}>
         <ToastContainer />
         <Grid item>
           <Tabs
-            value={value}
-            onChange={handleChange}
+            value={this.state.tabValue}
+            onChange={this.handleChangeTab}
             variant="fullWidth"
             indicatorColor="secondary"
             textColor="secondary"
@@ -72,42 +120,62 @@ const UserAuth = (props) => {
             {/* <Tab icon={<FavoriteIcon />} label="Log In" /> */}
           </Tabs>
         </Grid>
-        <Grid
-          item
-          className={classes.root}
-          justify="space-evenly"
-          alignItems="center"
-        >
-          {value == 0 ? (
+        <Grid item className={classes.root}>
+          {this.state.tabValue == 0 ? (
             <Paper className={classes.paper}>
-              <Typography variant="h5" gutterBottom align="center">
+              <Typography variant="h5" align="center">
                 Create Account
               </Typography>
 
-              <form className={classes.root} noValidate autoComplete="on">
-                <TextField
-                  fullWidth
-                  id="name"
-                  label="Name and surename"
-                  variant="outlined"
-                />
-                <TextField
-                  fullWidth
-                  id="mobile"
-                  label="Mobile number"
-                  variant="outlined"
-                />
+              <form
+                onSubmit={this.signUpOnSubmit}
+                className={classes.root}
+                noValidate
+                autoComplete="on"
+              >
                 <TextField
                   fullWidth
                   id="email"
+                  name="email"
                   label="Email"
                   variant="outlined"
+                  onChange={this.handleChange}
+                  helperText={errors.email}
+                  error={errors.email ? true : false}
                 />
+                <TextField
+                  fullWidth
+                  id="password"
+                  name="password"
+                  label="Password"
+                  type="password"
+                  variant="outlined"
+                  onChange={this.handleChange}
+                  helperText={errors.password}
+                  error={errors.password ? true : false}
+                />
+                <TextField
+                  fullWidth
+                  id="confirmPassword"
+                  label="Confirm Password"
+                  name="confirmPassword"
+                  type="password"
+                  variant="outlined"
+                  onChange={this.handleChange}
+                  helperText={errors.confirmPassword}
+                  error={errors.confirmPassword ? true : false}
+                />
+                {errors.error && (
+                  <Typography variant="body2" className={classes.customError}>
+                    {errors.error}
+                  </Typography>
+                )}
                 <Button
                   fullWidth
                   className={classes.formButton}
                   variant="contained"
                   color="primary"
+                  type="submit"
                 >
                   Register
                 </Button>
@@ -115,47 +183,81 @@ const UserAuth = (props) => {
             </Paper>
           ) : (
             <Paper className={classes.paper}>
-              <Typography variant="h5" gutterBottom align="center">
+              <Typography variant="h5" align="center">
                 Login
               </Typography>
 
-              <form className={classes.root} noValidate autoComplete="on">
+              <form
+                onSubmit={this.signInOnSubmit}
+                className={classes.root}
+                noValidate
+                autoComplete="on"
+              >
                 <TextField
                   fullWidth
-                  id="mobile"
-                  label="Mobile number"
+                  id="email"
+                  label="Email"
                   variant="outlined"
+                  name="email"
+                  value={this.state.email}
+                  onChange={this.handleChange}
+                  helperText={errors.email}
+                  error={errors.email ? true : false}
                 />
                 <TextField
                   fullWidth
-                  id="otp"
-                  label="OPT Code"
+                  id="password"
+                  label="Password"
                   variant="outlined"
+                  type="password"
+                  name="password"
+                  value={this.state.password}
+                  helperText={errors.password}
+                  error={errors.password ? true : false}
+                  onChange={this.handleChange}
                 />
+                {errors.error && (
+                  <Typography variant="body2" className={classes.customError}>
+                    {errors.error}
+                  </Typography>
+                )}
                 <Button
                   fullWidth
                   className={classes.formButton}
                   variant="contained"
                   color="primary"
+                  type="submit"
+                  disabled={loading}
                 >
                   Login
                 </Button>
               </form>
-              <Button
-                fullWidth
-                className={classes.formButton}
-                variant="contained"
-                color="primary"
-                onClick={signInbtnClick}
-              >
-                Login with Google
-              </Button>
             </Paper>
           )}
         </Grid>
       </Container>
-    </>
-  );
-};
+    );
+  }
+}
 
-export default UserAuth;
+UserAuth.propType = {
+  classes: PropTypes.object.isRequired,
+  loginUser: PropTypes.func.isRequired,
+  user: PropTypes.object.isRequired,
+  UI: PropTypes.object.isRequired,
+  signupUser: PropTypes.func.isRequired,
+};
+//takes globl stats
+const mapStateProps = (state) => ({
+  user: state.user,
+  UI: state.UI,
+});
+//which action we use
+const mapActionsToProps = {
+  loginUser,
+  signupUser,
+};
+export default connect(
+  mapStateProps,
+  mapActionsToProps
+)(withStyles(styles)(UserAuth));

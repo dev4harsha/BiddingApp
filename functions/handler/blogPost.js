@@ -107,6 +107,7 @@ exports.getAllBlogPosts = (req, res) => {
           likes: doc.data().likes,
           unlikes: doc.data().unlikes,
           userId: doc.data().userId,
+          createdAt: doc.data().createdAt,
         });
       });
       return res.json(blogPosts);

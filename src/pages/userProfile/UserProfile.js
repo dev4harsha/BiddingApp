@@ -57,7 +57,7 @@ function UserProfile() {
               <Tab
                 icon={<HistoryIcon fontSize="small" />}
                 label="History"
-                value="2}"
+                value="2"
               />
               <Tab
                 icon={<AccountCircleIcon fontSize="small" />}
