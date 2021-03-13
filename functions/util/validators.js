@@ -46,6 +46,7 @@ exports.reduceUserDetails = (data) => {
   let userDetails = {};
   if (!isEmpty(data.firstName)) userDetails.firstName = data.firstName;
   if (!isEmpty(data.lastName)) userDetails.lastName = data.lastName;
-
+  if (!isEmpty(data.mobile)) userDetails.mobile = data.mobile;
+  if (!isEmpty(data.country)) userDetails.country = data.country;
   return userDetails;
 };

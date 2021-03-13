@@ -2,22 +2,22 @@ import { Component } from 'react';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import './App.css';
 //Pages
-import Contact from './pages/contact/Contact';
+import Contact from './pages/Contact';
 import Footer from './components/footer/Footer';
 import Navbar from './components/header/Navbar';
-import Home from './pages/home/Home';
-import Auction from './pages/auction/Auction';
-import Terms from './pages/terms/Terms';
-import Weblog from './pages/weblog/Weblog';
-import About from './pages/about/About';
-import Faq from './pages/faq/Faq';
-import Bid from './pages/auction/bid/Bid';
+import Home from './pages/Home';
+import Auction from './pages/Auction';
+import Terms from './pages/Terms';
+import Weblog from './pages/Weblog';
+import About from './pages/About';
+import Faq from './pages/Faq';
+import Bid from './components/auction/Bid';
 import 'fontsource-roboto';
-import BlogPost from './pages/weblog/BlogPost';
-import UserProfile from './pages/userProfile/UserProfile';
+import BlogPost from './components/weblog/BlogPost';
+import UserProfile from './pages/UserProfile';
 
 import 'react-toastify/dist/ReactToastify.css';
-import UserAuth from './pages/userProfile/UserAuth';
+import UserAuth from './pages/UserAuth';
 import jwtDecode from 'jwt-decode';
 import AuthRoute from './AuthRoute';
 //theme
@@ -37,7 +37,7 @@ const token = localStorage.FBIdToken;
 if (token) {
   const decodedToken = jwtDecode(token);
   if (decodedToken.exp * 1000 < Date.now()) {
-    window.location.href = '/login';
+    //window.location.href = '/UserAuth';
 
     store.dispatch(logoutUser());
   } else {

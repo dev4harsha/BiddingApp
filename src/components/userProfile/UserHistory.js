@@ -34,20 +34,19 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   paper: {
-    padding: theme.spacing(3),
     textAlign: 'center',
   },
 }));
 
-function ProfileDetails() {
+function UserHistory() {
   const classes = useStyles();
   return (
     <Paper className={classes.paper}>
       <Typography variant="h5" gutterBottom align="center">
-        auction
+        User History
       </Typography>
     </Paper>
   );
 }
 
-export default ProfileDetails;
+export default UserHistory;

@@ -10,7 +10,7 @@ import { Button, Avatar } from '@material-ui/core';
 
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-
+import { logoutUser } from '../../redux/actions/userActions';
 class Navbar extends Component {
   constructor() {
     super();
@@ -26,7 +26,9 @@ class Navbar extends Component {
     this.setState({ click: false });
   };
 
-  signOutbtnClick = () => {};
+  handleLogOut = () => {
+    this.props.logoutUser();
+  };
 
   render() {
     const { authenticated } = this.props;
@@ -136,7 +138,7 @@ class Navbar extends Component {
                         <Button
                           variant="contained"
                           color="primary"
-                          onClick={this.signOutbtnClick}
+                          onClick={this.handleLogOut}
                         >
                           LogOut
                         </Button>
@@ -167,7 +169,9 @@ class Navbar extends Component {
 const mapStateToProps = (state) => ({
   authenticated: state.user.authenticated,
 });
+const mapActionsToProps = { logoutUser };
 Navbar.propTypes = {
   authenticated: PropTypes.bool.isRequired,
+  logoutUser: PropTypes.func.isRequired,
 };
-export default connect(mapStateToProps)(Navbar);
+export default connect(mapStateToProps, mapActionsToProps)(Navbar);

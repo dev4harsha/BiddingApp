@@ -7,10 +7,12 @@ export default {
   // backgrond: {
   //   default: '#fff',
   // },
-  pageTopPadding: {
-    paddingTop: '20px',
-  },
-  typography: {
-    useNextVariants: true,
+  spreadThis: {
+    pageTopPadding: {
+      paddingTop: '20px',
+    },
+    typography: {
+      useNextVariants: true,
+    },
   },
 };

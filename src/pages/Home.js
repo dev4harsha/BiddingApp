@@ -4,10 +4,8 @@ import { useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Typography, Container, Grid, Paper } from '@material-ui/core';
 
-import PostThum from '../weblog/PostThum';
-
-import Auction from '../auction/Auction';
-import Weblog from '../weblog/Weblog';
+import Auction from './Auction';
+import Weblog from './Weblog';
 
 const useStyles = makeStyles((theme) => ({
   root: {},

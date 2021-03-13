@@ -24,7 +24,7 @@ import {
 } from '@material-ui/core';
 import withStyles from '@material-ui/core/styles/withStyles';
 import { Edit, Delete } from '@material-ui/icons';
-import DomainDialog from './DomainDialog';
+
 import { Component } from 'react';
 
 const styles = (theme) => ({

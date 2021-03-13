@@ -17,7 +17,7 @@ import { FaSignInAlt } from 'react-icons/fa';
 import { toast, ToastContainer } from 'react-toastify';
 //Redux
 import { connect } from 'react-redux';
-import { loginUser, signupUser } from '../../redux/actions/userActions';
+import { loginUser, signupUser } from '../redux/actions/userActions';
 
 const styles = (theme) => ({
   root: {
@@ -93,6 +93,7 @@ class UserAuth extends Component {
       password: this.state.password,
       confirmPassword: this.state.confirmPassword,
     };
+
     this.props.signupUser(NewUserData, this.props.history);
   };
 

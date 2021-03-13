@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import axios from 'axios';
 import { Typography, Container } from '@material-ui/core';
-import AuctionCommon from './AuctionCommon';
+import AuctionCommon from '../components/auction/AuctionCommon';
 import { ScaleLoader } from 'react-spinners';
 
 const useStyles = makeStyles((theme) => ({

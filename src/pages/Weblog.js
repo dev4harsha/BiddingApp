@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Container, Grid, Typography } from '@material-ui/core';
-import PostThum from './PostThum';
+
 import { ScaleLoader } from 'react-spinners';
 import axios from 'axios';
+import PostThum from '../components/weblog/PostThum';
 
 const useStyles = makeStyles((theme) => ({
   root: {},
