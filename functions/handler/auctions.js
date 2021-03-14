@@ -1,73 +1,68 @@
 const { doc } = require('prettier');
 const { db, admin } = require('../util/admin');
 
-exports.getAllDomains = (req, res) => {
-  db.collection('domains')
+exports.getAllAuctions = (req, res) => {
+  db.collection('auctions')
     .orderBy('createdAt', 'desc')
     .where('active', '==', true)
+    .where('approval', '==', true)
     .get()
     .then((data) => {
-      let domains = [];
+      let auctions = [];
       data.forEach((doc) => {
-        domains.push({
-          domainId: doc.id,
-          domainname: doc.data().domainname,
-          registrar: doc.data().registrar,
-          bidamount: doc.data().bidamount,
-          expires: doc.data().expires,
+        auctions.push({
+          auctionId: doc.id,
+          auctionName: doc.data().auctionName,
+          initAmount: doc.data().initAmount,
           endDateTime: doc.data().endDateTime,
-          domaintype: doc.data().domaintype,
+          auctionType: doc.data().auctionType,
           bids: doc.data().bids,
-          age: doc.data().age,
         });
       });
-      return res.json(domains);
+      return res.json(auctions);
     })
     .catch((err) => console.error(err));
 };
 
-exports.getAuthUserAllDomains = (req, res) => {
-  db.collection('domains')
+exports.getAuthUserAllAuctions = (req, res) => {
+  db.collection('auctions')
     .orderBy('createdAt', 'desc')
     .where('userId', '==', req.user.uid)
     .get()
     .then((data) => {
-      let domains = [];
+      let auctions = [];
       data.forEach((doc) => {
-        domains.push({
+        auctions.push({
           domainId: doc.id,
-          domainname: doc.data().domainname,
-          registrar: doc.data().registrar,
-          bidamount: doc.data().bidamount,
-          expires: doc.data().expires,
+          auctionName: doc.data().auctionName,
+          initAmount: doc.data().initAmount,
           endDateTime: doc.data().endDateTime,
-          domaintype: doc.data().domaintype,
-          age: doc.data().age,
+          auctionType: doc.data().auctionType,
           active: doc.data().active,
+          approval: doc.data().approval,
           bids: doc.data().bids,
         });
       });
-      return res.json(domains);
+      return res.json(auctions);
     })
     .catch((err) => console.error(err));
 };
-exports.postOneDomain = (req, res) => {
-  const newDomain = {
-    domainname: req.body.domainname,
-    registrar: req.body.registrar,
-    domaintype: req.body.domaintype,
-    age: req.body.age,
-    bidamount: req.body.bidamount,
+exports.postOneAuction = (req, res) => {
+  const newAuction = {
+    auctionName: req.body.auctionName,
+    auctionType: req.body.auctionType,
+    itemDescription: req.body.itemDescription,
+    initAmount: req.body.initAmount,
     createdAt: new Date().toISOString(),
     endDateTime: admin.firestore.Timestamp.fromDate(new Date()), //req.body.endDateTime, //admin.firestore.Timestamp.fromDate(new Date()),
-    expires: admin.firestore.Timestamp.fromDate(new Date()), //req.body.expires, //admin.firestore.Timestamp.fromDate(new Date()),
     userId: req.user.uid,
+    approval: false,
     active: false,
     maxBid: 0,
     bids: 0,
   };
-  db.collection('domains')
-    .add(newDomain)
+  db.collection('auctions')
+    .add(newAuction)
     .then((doc) => {
       res.json({ message: `Document ${doc.id} created successfully ` });
     })
@@ -76,25 +71,27 @@ exports.postOneDomain = (req, res) => {
       console.log(err);
     });
 };
-exports.activeDeactiveDomain = (req, res) => {
+exports.activeDeactiveAuction = (req, res) => {
   let status;
 
-  db.doc(`/domains/${req.params.domainId}`)
+  db.doc(`/auctions/${req.params.auctionId}`)
     .get()
     .then((doc) => {
       if (!doc.exists) {
-        return res.status(400).json({ error: 'Domain not found!' });
+        return res.status(400).json({ error: 'Auction not found!' });
       }
 
       if (doc.data().userId !== req.user.uid) {
         return res.status(400).json({
-          error: `Not allowed to change ${doc.data().domainname} domain status`,
+          error: `Not allowed to change ${
+            doc.data().auctionName
+          } auction status`,
         });
       } else {
         status = !doc.data().active;
         return doc.ref.update({ active: status }).then(() => {
           return res.json({
-            message: `Domain ${status ? 'Deactivated' : 'Ativated'}`,
+            message: `Auction ${status ? 'Ativated' : 'Deactivated'}`,
           });
         });
       }
@@ -104,28 +101,28 @@ exports.activeDeactiveDomain = (req, res) => {
       res.status(500).json({ error: err.code });
     });
 };
-exports.getDomain = (req, res) => {
-  let domainData = {};
-  db.doc(`/domains/${req.params.domainId}`)
+exports.getAuction = (req, res) => {
+  let auctionData = {};
+  db.doc(`/auctions/${req.params.auctionId}`)
     .get()
     .then((doc) => {
       if (!doc.exists) {
-        return res.status(400).json({ error: 'Domain not found!' });
+        return res.status(400).json({ error: 'Auction not found!' });
       }
-      domainData = doc.data();
-      domainData.domainId = doc.id;
+      auctionData = doc.data();
+      auctionData.auctionId = doc.id;
       return db
         .collection('bids')
         .orderBy('createdAt', 'desc')
-        .where('domainId', '==', req.params.domainId)
+        .where('auctionId', '==', req.params.auctionId)
         .get();
     })
     .then((data) => {
-      domainData.bidsData = [];
+      auctionData.bidsData = [];
       data.forEach((doc) => {
-        domainData.bids.push(doc.data());
+        auctionData.bidsData.push(doc.data());
       });
-      return res.json(domainData);
+      return res.json(auctionData);
     })
     .catch((err) => {
       console.error(err);
@@ -133,33 +130,38 @@ exports.getDomain = (req, res) => {
     });
 };
 
-exports.bidOnDomain = (req, res) => {
+exports.bidOnAuction = (req, res) => {
   const newBid = {
     createdAt: new Date().toISOString(),
     bidAmount: req.body.bidAmount,
-    domainId: req.params.domainId,
+    auctionId: req.params.auctionId,
     userId: req.user.uid,
     userName: req.user.email,
   };
 
-  const domainDocument = db.doc(`/domains/${req.params.domainId}`);
-  let domainData;
+  const domainDocument = db.doc(`/auctions/${req.params.auctionId}`);
+  let auctionData;
   domainDocument
     .get()
     .then((doc) => {
       if (!doc.exists) {
-        return res.status(404).json({ error: 'Domain not found!' });
+        return res.status(404).json({ error: 'Auction not found!' });
       } else {
-        domainData = doc.data();
+        auctionData = doc.data();
       }
       if (!doc.data().active) {
         return res
           .status(404)
-          .json({ error: 'Not allowed to bid, Domain not active!' });
+          .json({ error: 'Not allowed to bid, Auction not active!' });
+      }
+      if (!doc.data().approval) {
+        return res
+          .status(404)
+          .json({ error: 'Not allowed to bid, Auction not approve!' });
       }
       if (
         doc.data().maxBid >= req.body.bidAmount ||
-        doc.data().bidamount >= req.body.bidAmount
+        doc.data().initAmount >= req.body.bidAmount
       ) {
         return res
           .status(404)
@@ -168,7 +170,7 @@ exports.bidOnDomain = (req, res) => {
 
       return db
         .collection('bids')
-        .where('domainId', '==', req.params.domainId)
+        .where('auctionId', '==', req.params.auctionId)
         .where('userId', '==', req.user.uid)
         .limit(1)
         .get()
@@ -180,7 +182,7 @@ exports.bidOnDomain = (req, res) => {
               .collection('bids')
               .add(newBid)
               .then((data) => {
-                //domainData.bids++;
+                //auctionData.bids++;
                 doc.ref.update({
                   bids: doc.data().bids + 1,
                   maxBidId: data.id,
@@ -215,26 +217,26 @@ exports.bidOnDomain = (req, res) => {
       return res.status(500).json({ error: 'Somthing went wrong' });
     });
 };
-exports.deleteDomain = (req, res) => {
-  const documnet = db.doc(`/domains/${req.params.domainId}`);
+exports.deleteAuction = (req, res) => {
+  const documnet = db.doc(`/auctions/${req.params.auctionId}`);
   documnet
     .get()
     .then((doc) => {
       if (!doc.exists) {
-        return res.status(404).json({ error: 'Domain not found' });
+        return res.status(404).json({ error: 'Auction not found' });
       }
       if (doc.data().userId !== req.user.uid) {
         return res.status(404).json({ error: 'Unauthorized' });
       }
       if (doc.data().bids > 0) {
         return res.status(404).json({
-          error: `Can not delete, ${doc.data().bids} bids available`,
+          error: `Can not delete, ${doc.data().bids} bids are available`,
         });
       }
       return documnet.delete();
     })
     .then(() => {
-      return res.json({ message: 'Domain deleted successfully' });
+      return res.json({ message: 'Auction deleted successfully' });
     })
     .catch((err) => {
       console.error(err);

@@ -13,14 +13,14 @@ const {
   likePost,
 } = require('./handler/blogPost');
 const {
-  getAllDomains,
-  postOneDomain,
-  getDomain,
-  bidOnDomain,
-  getAuthUserAllDomains,
-  activeDeactiveDomain,
-  deleteDomain,
-} = require('./handler/domins');
+  getAllAuctions,
+  postOneAuction,
+  getAuction,
+  bidOnAuction,
+  getAuthUserAllAuctions,
+  activeDeactiveAuction,
+  deleteAuction,
+} = require('./handler/auctions');
 const {
   signup,
   login,
@@ -31,15 +31,15 @@ const {
 } = require('./handler/user');
 
 //common
-app.get('/domains', getAllDomains);
-app.get('/domain/:domainId', getDomain);
+app.get('/auctions', getAllAuctions); //done
+app.get('/auction/:auctionId', getAuction); //done
 
 //auth user domain
-app.get('/userDomains', FBAuth, getAuthUserAllDomains);
-app.post('/domain', FBAuth, postOneDomain);
-app.post('/domian/:domainId/bid', FBAuth, bidOnDomain);
-app.get('/domian/:domainId/activeDeactive', FBAuth, activeDeactiveDomain);
-app.get('/domian/:domainId/', FBAuth, deleteDomain);
+app.get('/userAuctions', FBAuth, getAuthUserAllAuctions); //done
+app.post('/auction', FBAuth, postOneAuction); //done
+app.post('/auction/:auctionId/bid', FBAuth, bidOnAuction);
+app.get('/auction/:auctionId/activeDeactive', FBAuth, activeDeactiveAuction); //done
+app.get('/auction/:auctionId/delete', FBAuth, deleteAuction); //done
 
 //blogPost
 app.post('/blogPost', FBAuth, postOneBlog);
@@ -67,23 +67,25 @@ exports.createNotificationOnDomain = functions.firestore
     };
 
     return db
-      .doc(`/domains/${snapshot.after.data().domainId}`)
+      .doc(`/auctions/${snapshot.after.data().auctionId}`)
       .get()
       .then((doc) => {
-        if (doc.data().bids > 1) {
+        if (doc.data().bids > 0) {
           notificaionData.sender = snapshot.after.data().userId;
-          notificaionData.domainId = snapshot.after.data().domainId;
+          notificaionData.auctionId = snapshot.after.data().auctionId;
           notificaionData.message = `New bid added ${
             snapshot.after.data().bidAmount
-          } on ${doc.data().domainname}`;
+          } on ${doc.data().auctionName}`;
           notificaionData.bidId = snapshot.after.id;
           const batch = db.batch();
+
           return db
             .collection('bids')
-            .where('domainId', '==', snapshot.after.data().domainId)
+            .where('auctionId', '==', snapshot.after.data().auctionId)
             .where('userId', '!=', snapshot.after.data().userId)
             .get()
             .then((data) => {
+              console.log(data);
               data.forEach((doc) => {
                 notificaionData.recipient = doc.data().userId;
                 console.log(doc.data().userId);
@@ -93,7 +95,7 @@ exports.createNotificationOnDomain = functions.firestore
               });
               return batch.commit();
             });
-        } else return flase;
+        } else return false;
       })
       .catch((err) => {
         console.error(err);

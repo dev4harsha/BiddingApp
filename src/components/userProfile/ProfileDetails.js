@@ -21,6 +21,7 @@ import {
 } from '@material-ui/core';
 import { Component } from 'react';
 import { uploadImage } from '../../redux/actions/userActions';
+import EditDetails from './EditDetails';
 
 const styles = (theme) => ({
   root: {
@@ -146,32 +147,23 @@ class ProfileDetails extends Component {
               </Grid>
             </Grid>
             <Grid item className={classes.inputDiv}>
-              <input
-                accept="image/*"
-                className={classes.input}
-                id="imageInput"
-                type="file"
-                onChange={this.handleImageChange}
-              />
-              <label htmlFor="imageInput">
-                <Button variant="contained" color="primary" component="span">
-                  Edit Details
-                </Button>
-              </label>
+              <>
+                <input
+                  accept="image/*"
+                  className={classes.input}
+                  id="imageInput"
+                  type="file"
+                  onChange={this.handleImageChange}
+                />
+                <label htmlFor="imageInput">
+                  <Button variant="contained" color="primary" component="span">
+                    Change Image
+                  </Button>
+                </label>
+              </>
             </Grid>
             <Grid item className={classes.inputDiv}>
-              <input
-                accept="image/*"
-                className={classes.input}
-                id="imageInput"
-                type="file"
-                onChange={this.handleImageChange}
-              />
-              <label htmlFor="imageInput">
-                <Button variant="contained" color="primary" component="span">
-                  Change image
-                </Button>
-              </label>
+              <EditDetails />
             </Grid>
           </Grid>
         </Grid>
