@@ -36,6 +36,7 @@ export default function (state = initialstate, action) {
         ...state,
         loading: true,
       };
+
     default:
       return state;
   }

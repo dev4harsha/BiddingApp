@@ -15,6 +15,7 @@ import {
 } from '@material-ui/core';
 import { FaSignInAlt } from 'react-icons/fa';
 import { toast, ToastContainer } from 'react-toastify';
+import { withRouter } from 'react-router';
 //Redux
 import { connect } from 'react-redux';
 import { loginUser, signupUser } from '../redux/actions/userActions';
@@ -258,7 +259,6 @@ const mapActionsToProps = {
   loginUser,
   signupUser,
 };
-export default connect(
-  mapStateProps,
-  mapActionsToProps
-)(withStyles(styles)(UserAuth));
+export default withRouter(
+  connect(mapStateProps, mapActionsToProps)(withStyles(styles)(UserAuth))
+);

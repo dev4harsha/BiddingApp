@@ -1,5 +1,5 @@
 import { Component } from 'react';
-import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
+import { Route } from 'react-router-dom';
 import './App.css';
 //Pages
 import Contact from './pages/Contact';
@@ -52,22 +52,20 @@ class App extends Component {
     return (
       <MuiThemeProvider theme={theme}>
         <Provider store={store}>
-          <Router>
-            <Navbar />
-            <Route exact path="/" component={Home} />
-            <Route exact path="/auction" component={Auction} />
-            <Route exact path="/BlogPost" component={BlogPost} />
-            <Route exact path="/faq" component={Faq} />
-            <Route exact path="/about" component={About} />
-            <Route exact path="/weblog" component={Weblog} />
-            <Route exact path="/terms" component={Terms} />
-            <Route exact path="/contact" component={Contact} />
-            <Route exact path="/UserAuth" component={UserAuth} />
+          <Navbar />
+          <Route exact path="/" component={Home} />
+          <Route exact path="/auction" component={Auction} />
+          <Route exact path="/BlogPost" component={BlogPost} />
+          <Route exact path="/faq" component={Faq} />
+          <Route exact path="/about" component={About} />
+          <Route exact path="/weblog" component={Weblog} />
+          <Route exact path="/terms" component={Terms} />
+          <Route exact path="/contact" component={Contact} />
+          <Route exact path="/UserAuth" component={UserAuth} />
 
-            <AuthRoute path="/user" component={UserProfile} />
-            <AuthRoute path="/bid" component={Bid} />
-            <Footer />
-          </Router>
+          <AuthRoute path="/user" component={UserProfile} />
+          <AuthRoute path="/bid" component={Bid} />
+          <Footer />
         </Provider>
       </MuiThemeProvider>
     );

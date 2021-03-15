@@ -14,7 +14,6 @@ exports.postOneBlog = (req, res) => {
   const newPost = {
     createdAt: new Date().toISOString(),
     likes: 0,
-    unlikes: 0,
     userId: req.user.uid,
   };
 
@@ -101,11 +100,10 @@ exports.getAllBlogPosts = (req, res) => {
       data.forEach((doc) => {
         blogPosts.push({
           postId: doc.id,
-          postTitle: doc.data().title,
-          postBody: doc.data().post,
+          title: doc.data().title,
+          post: doc.data().post,
           imageURL: doc.data().imageURL,
           likes: doc.data().likes,
-          unlikes: doc.data().unlikes,
           userId: doc.data().userId,
           createdAt: doc.data().createdAt,
         });
@@ -226,8 +224,6 @@ exports.postUpdateBlog = (req, res) => {
 // };
 
 exports.likePost = (req, res) => {
-  const trueOrFalseLike = req.params.trueOrFalse == 'true' ? true : false;
-
   const likeDocument = db
     .collection('likes')
     .where('userId', '==', req.user.uid)
@@ -253,52 +249,21 @@ exports.likePost = (req, res) => {
           .add({
             postId: req.params.postId,
             userId: req.user.uid,
-            like: trueOrFalseLike,
           })
           .then(() => {
-            if (trueOrFalseLike) {
-              postData.likes++;
-              return postDocument.update({ likes: postData.likes });
-            } else {
-              postData.unlikes++;
-              return postDocument.update({ unlikes: postData.unlikes });
-            }
-          })
-          .then(() => {
-            return res.json(postData);
+            postData.likes++;
+            return postDocument.update({ likes: postData.likes });
           });
+        // .then(() => {
+        //   return res.json(postData);
+        // });
       } else {
         const likeDoc = db.doc(`/likes/${data.docs[0].id}`);
 
-        if (data.docs[0].data().like) {
-          if (trueOrFalseLike) {
-            return likeDoc.delete().then(() => {
-              postData.likes--;
-              postDocument.update({ likes: postData.likes });
-            });
-          } else {
-            return likeDoc.update({ like: trueOrFalseLike }).then(() => {
-              postDocument.update({
-                likes: postData.likes - 1,
-                unlikes: postData.unlikes + 1,
-              });
-            });
-          }
-        } else {
-          if (!trueOrFalseLike) {
-            return likeDoc.delete().then(() => {
-              postData.unlikes--;
-              postDocument.update({ unlikes: postData.unlikes });
-            });
-          } else {
-            return likeDoc.update({ like: trueOrFalseLike }).then(() => {
-              postDocument.update({
-                likes: postData.likes + 1,
-                unlikes: postData.unlikes - 1,
-              });
-            });
-          }
-        }
+        return likeDoc.delete().then(() => {
+          postData.likes--;
+          return postDocument.update({ likes: postData.likes });
+        });
       }
     })
     .then(() => {
