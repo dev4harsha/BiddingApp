@@ -85,6 +85,7 @@ class UserAuth extends Component {
       password: this.state.password,
     };
     this.props.loginUser(userData, this.props.history);
+    // this.props.history.push('/user');
   };
 
   signUpOnSubmit = (event) => {

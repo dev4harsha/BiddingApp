@@ -6,6 +6,7 @@ import {
   SET_AUTHENTICATED,
   SET_UNAUTHENTICATED,
   LOADING_USER,
+  LIKE_UNLIKE_POST,
 } from '../types';
 
 const initialstate = {
@@ -36,6 +37,27 @@ export default function (state = initialstate, action) {
         ...state,
         loading: true,
       };
+    case LIKE_UNLIKE_POST:
+      let index = state.likes.findIndex(
+        (like) => like.postId === action.payload.postId
+      );
+      console.log(index);
+      if (index < 0) {
+        return {
+          ...state,
+          likes: [
+            ...state.likes,
+            { userId: state.credentials.userId, postId: action.payload.postId },
+          ],
+        };
+      } else {
+        return {
+          ...state,
+          likes: state.likes.filter(
+            (like) => like.postId !== action.payload.postId
+          ),
+        };
+      }
 
     default:
       return state;

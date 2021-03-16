@@ -55,7 +55,7 @@ class App extends Component {
           <Navbar />
           <Route exact path="/" component={Home} />
           <Route exact path="/auction" component={Auction} />
-          <Route exact path="/BlogPost" component={BlogPost} />
+          <Route exact path="/BlogPost/:postId" component={BlogPost} />
           <Route exact path="/faq" component={Faq} />
           <Route exact path="/about" component={About} />
           <Route exact path="/weblog" component={Weblog} />
