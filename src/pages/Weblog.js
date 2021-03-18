@@ -8,8 +8,12 @@ import PostThum from '../components/weblog/PostThum';
 import { render } from '@testing-library/react';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import { firestoreConnect } from 'react-redux-firebase';
+import { compose } from 'redux';
+
 import PropTypes from 'prop-types';
 import { getPosts } from '../redux/actions/weblogActions';
+
 const styles = (theme) => ({
   root: {},
   container: {
@@ -31,7 +35,7 @@ class Weblog extends Component {
   }
 
   componentDidMount() {
-    this.props.getPosts();
+    // this.props.getPosts();
   }
 
   render() {
@@ -80,4 +84,5 @@ Weblog.propType = {
 const mapStateProps = (state) => ({
   weblog: state.weblog,
 });
+
 export default connect(mapStateProps, { getPosts })(withStyles(styles)(Weblog));
