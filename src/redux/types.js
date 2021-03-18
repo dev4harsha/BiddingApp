@@ -12,3 +12,6 @@ export const CLEAR_ERRORS = 'CLEAR_ERRORS';
 export const SET_POSTS = 'SET_POSTS';
 export const SET_POST = 'SET_POST';
 export const LIKE_UNLIKE_POST = 'LIKE_UNLIKE_POST';
+//auction reducer types
+export const SET_AUCTIONS = 'SET_AUCTIONS';
+export const LOADING_AUCTIONS = 'LOADING_AUCTIONS';

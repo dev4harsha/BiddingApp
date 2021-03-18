@@ -29,9 +29,13 @@ import { Provider } from 'react-redux';
 import store from './redux/store';
 import { SET_AUTHENTICATED } from './redux/types';
 import { logoutUser, getUserData } from './redux/actions/userActions';
+import { getPosts } from './redux/actions/weblogActions';
+import { getAuctions } from './redux/actions/auctionActions';
 import axios from 'axios';
 
 const theme = createMuiTheme(themeFile);
+// store.dispatch(getPosts());
+// store.dispatch(getAuctions());
 
 const token = localStorage.FBIdToken;
 if (token) {
@@ -62,9 +66,10 @@ class App extends Component {
           <Route exact path="/terms" component={Terms} />
           <Route exact path="/contact" component={Contact} />
           <Route exact path="/UserAuth" component={UserAuth} />
+          <Route path="/auction/:auctionId/bid" component={Bid} />
 
           <AuthRoute path="/user" component={UserProfile} />
-          <AuthRoute path="/bid" component={Bid} />
+
           <Footer />
         </Provider>
       </MuiThemeProvider>

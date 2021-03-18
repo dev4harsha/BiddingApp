@@ -12,7 +12,7 @@ exports.postOneBlog = (req, res) => {
   const noImg = 'no-img.png';
 
   const newPost = {
-    createdAt: new Date().toISOString(),
+    createdAt: new Date(),
     likes: 0,
     userId: req.user.uid,
   };

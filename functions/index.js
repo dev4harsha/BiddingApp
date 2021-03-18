@@ -61,7 +61,7 @@ exports.createNotificationOnDomain = functions.firestore
   .document('bids/{id}')
   .onWrite((snapshot) => {
     const notificaionData = {
-      createdAt: new Date().toISOString(),
+      createdAt: new Date(),
       type: 'bids',
       read: false,
     };

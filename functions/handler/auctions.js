@@ -53,7 +53,7 @@ exports.postOneAuction = (req, res) => {
     auctionType: req.body.auctionType,
     itemDescription: req.body.itemDescription,
     initAmount: req.body.initAmount,
-    createdAt: new Date().toISOString(),
+    createdAt: new Date(),
     endDateTime: admin.firestore.Timestamp.fromDate(new Date()), //req.body.endDateTime, //admin.firestore.Timestamp.fromDate(new Date()),
     userId: req.user.uid,
     approval: false,
@@ -132,11 +132,12 @@ exports.getAuction = (req, res) => {
 
 exports.bidOnAuction = (req, res) => {
   const newBid = {
-    createdAt: new Date().toISOString(),
+    createdAt: new Date(),
     bidAmount: req.body.bidAmount,
     auctionId: req.params.auctionId,
     userId: req.user.uid,
     userName: req.user.email,
+    imageUrl: req.user.imageUrl,
   };
 
   const domainDocument = db.doc(`/auctions/${req.params.auctionId}`);

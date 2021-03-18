@@ -7,8 +7,12 @@ import TimerIcon from '@material-ui/icons/Timer';
 import LocalOfferIcon from '@material-ui/icons/LocalOffer';
 import { Redirect } from 'react-router-dom';
 import moment from 'moment';
+import withStyles from '@material-ui/core/styles/withStyles';
+import { render } from 'react-dom';
+import { Component } from 'react';
+import { withRouter } from 'react-router';
 
-const useStyles = makeStyles((theme) => ({
+const styles = (theme) => ({
   root: {
     display: 'flex',
   },
@@ -62,74 +66,79 @@ const useStyles = makeStyles((theme) => ({
   icons: {
     marginRight: '5px',
   },
-}));
+});
 
-function AuctionCommon(props) {
-  const classes = useStyles();
-  const [viwePost, setViewBid] = useState(true);
+class AuctionCommon extends Component {
+  viweAuction = (value) => {
+    //this.props.history.push(/auction/:auctionId/bid"`, { postId: postId });
+    this.props.history.push(`/auction/${this.props.auction.auctionId}/bid`, {
+      auctionId: this.props.auction.auctionId,
+    });
+  };
 
-  if (!viwePost) {
-    return <Redirect to="/bid" />;
-  }
-
-  return (
-    <div className={classes.root}>
-      <Grid container justify="flex-start" className={classes.container}>
-        <Grid item className={classes.items} xs={6} sm={6} md={3} lg={3}>
-          <Typography variant="h5">{props.domainname}</Typography>
-        </Grid>
-
-        <Grid item className={classes.item2} xs={12} sm={12} md={6} lg={6}>
-          <Grid item className={classes.items} xs>
-            <Typography variant="h6" className={classes.typoIcon}>
-              <LocalOfferIcon className={classes.icons} />
-
-              {props.bidamount}
-            </Typography>
+  render() {
+    const { classes } = this.props;
+    const { auctionName, initAmount, bids, endDateTime } = this.props.auction;
+    return (
+      <div className={classes.root}>
+        <Grid container justify="flex-start" className={classes.container}>
+          <Grid item className={classes.items} xs={6} sm={6} md={3} lg={3}>
+            <Typography variant="h5">{auctionName}</Typography>
           </Grid>
-          <Grid item className={classes.items} xs>
-            <Typography
-              variant="h6"
-              align="center"
-              className={classes.typoIcon}
-            >
-              <People className={classes.icons} />
-              {props.bids}
-            </Typography>
-          </Grid>
-          <Grid item className={classes.items} xs>
-            <Typography
-              variant="h6"
-              align="center"
-              className={classes.typoIcon}
-            >
-              <TimerIcon className={classes.icons} />
-              {moment(props.endDateTime).format('hh:mm:ss')}
-            </Typography>
-          </Grid>
-        </Grid>
 
-        <Grid
-          item
-          className={`${classes.item3} ${classes.items}`}
-          xs={6}
-          sm={6}
-          md={3}
-          lg={6}
-        >
-          <Button
-            className={classes.formButton}
-            variant="contained"
-            color="primary"
-            onClick={() => setViewBid(false)}
-            fullWidth
+          <Grid item className={classes.item2} xs={12} sm={12} md={6} lg={6}>
+            <Grid item className={classes.items} xs>
+              <Typography variant="h6" className={classes.typoIcon}>
+                <LocalOfferIcon className={classes.icons} />
+
+                {initAmount}
+              </Typography>
+            </Grid>
+            <Grid item className={classes.items} xs>
+              <Typography
+                variant="h6"
+                align="center"
+                className={classes.typoIcon}
+              >
+                <People className={classes.icons} />
+                {bids}
+              </Typography>
+            </Grid>
+            <Grid item className={classes.items} xs>
+              <Typography
+                variant="h6"
+                align="center"
+                className={classes.typoIcon}
+              >
+                <TimerIcon className={classes.icons} />
+
+                {moment.unix(endDateTime._seconds).format('h:mm:ss A')}
+              </Typography>
+            </Grid>
+          </Grid>
+
+          <Grid
+            item
+            className={`${classes.item3} ${classes.items}`}
+            xs={6}
+            sm={6}
+            md={3}
+            lg={6}
           >
-            Bid now
-          </Button>
+            <Button
+              className={classes.formButton}
+              variant="contained"
+              color="primary"
+              onClick={() => this.viweAuction(false)}
+              fullWidth
+            >
+              Bid now
+            </Button>
+          </Grid>
         </Grid>
-      </Grid>
-    </div>
-  );
+      </div>
+    );
+  }
 }
 
-export default AuctionCommon;
+export default withRouter(withStyles(styles)(AuctionCommon));

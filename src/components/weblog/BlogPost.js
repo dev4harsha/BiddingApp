@@ -42,33 +42,23 @@ class BlogPost extends Component {
     this.state = {
       listPosts: { start: 0, end: 3 },
       post: {},
-      postId: history.state.state.postId,
+      postId: this.props.match.params.postId,
     };
   }
   componentDidMount() {
-    if (this.props.weblog.posts.length === 0) {
-      this.props.getPosts();
-    } else {
-      this.setPostToState(this.props);
-    }
+    // if (this.props.weblog.posts.length === 0) {
+    //   this.props.getPosts();
+    // } else {
+    //   this.setPostToState(this.props);
+    // }
+    //this.setPostToState();
   }
   componentWillReceiveProps(nextProps) {
-    if (nextProps.weblog.posts.length > 0) {
-      this.setPostToState(nextProps);
-    }
-
-    //this.setPostToState(nextProps);
+    //   if (nextProps.weblog.posts.length > 0) {
+    //     this.setPostToState(nextProps);
+    //   }
+    //   //this.setPostToState(nextProps);
   }
-  setPostToState = (nextProps) => {
-    if (nextProps.weblog.posts) {
-      console.log(this.state.postId);
-      const post = nextProps.weblog.posts.find(
-        (post) => post.postId === history.state.state.postId
-      );
-      this.setState({ post: post });
-      console.log(this.state);
-    }
-  };
 
   render() {
     const {
@@ -76,6 +66,9 @@ class BlogPost extends Component {
       weblog: { loading },
     } = this.props;
     const { posts } = this.props.weblog;
+    const post = this.props.weblog.posts.find(
+      (post) => post.postId === this.props.match.params.postId
+    );
 
     let showPost = loading ? (
       <ScaleLoader
@@ -89,39 +82,36 @@ class BlogPost extends Component {
         <Grid container spacing={3}>
           <Grid item xs={12} sm={12} md={12} lg={8}>
             <Paper>
-              {this.state.post.imageURL && (
+              {post.imageURL && (
                 <CardMedia
                   className={classes.media}
-                  image={this.state.post.imageURL}
+                  image={post.imageURL}
                   title="Contemplative Reptile"
                 />
               )}
 
               <CardContent>
                 {this.props.weblog.posts.length !== 0 && (
-                  <PostActions postId={history.state.state.postId} />
+                  <PostActions postId={this.props.match.params.postId} />
                 )}
-                {this.state.post.createdAt && (
+                {post.createdAt && (
                   <Typography variant="body1">
-                    {moment(this.state.post.createdAt)
-                      .utc()
-                      .format('YYYY-MM-DD')}{' '}
-                    <span />
-                    {moment(this.state.post.createdAt).utc().format('HH:mm A')}
+                    {moment(post.createdAt).utc().format('YYYY-MM-DD')} <span />
+                    {moment(post.createdAt).utc().format('HH:mm A')}
                   </Typography>
                 )}
-                {this.state.post.title && (
+                {post.title && (
                   <Typography variant="h5" component="h2">
-                    {this.state.post.title}
+                    {post.title}
                   </Typography>
                 )}
-                {this.state.post.post && (
+                {post.post && (
                   <Typography
                     variant="body2"
                     color="textSecondary"
                     component="p"
                   >
-                    {this.state.post.post}
+                    {post.post}
                   </Typography>
                 )}
               </CardContent>

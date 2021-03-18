@@ -27,7 +27,7 @@ function Home() {
     <>
       <Container maxwidth="lg" className={classes.container}>
         <Grid item>
-          <Auction noOfDoms={5} />
+          <Auction noOfAuctions={5} />
         </Grid>
 
         <Grid item>

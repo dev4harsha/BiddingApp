@@ -55,8 +55,7 @@ class PostThum extends Component {
             />
             <CardContent>
               <Typography gutterBottom variant="body2">
-                {moment(createdAt).utc().format('YYYY-MM-DD')} <span />
-                {moment(createdAt).utc().format('HH:mm A')}
+                {moment.unix(createdAt._seconds).format('MM/DD/YYYY h:mm:ss A')}
               </Typography>
               <Typography
                 gutterBottom
