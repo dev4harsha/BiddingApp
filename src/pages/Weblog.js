@@ -13,6 +13,7 @@ import { compose } from 'redux';
 
 import PropTypes from 'prop-types';
 import { getPosts } from '../redux/actions/weblogActions';
+import { withRouter } from 'react-router';
 
 const styles = (theme) => ({
   root: {},
@@ -33,35 +34,40 @@ class Weblog extends Component {
       listPosts: { start: 0, end: 10 },
     };
   }
-
-  componentDidMount() {
-    // this.props.getPosts();
+  componentWillReceiveProps(next) {
+    console.log(next.firestore.ordered.blogPosts);
+    const loading = next.firestore.status.requesting.blogPosts;
+    console.log(loading);
   }
-
   render() {
     const { classes } = this.props;
-    const { posts, loading } = this.props.weblog;
-    let recentPosts = loading ? (
-      <ScaleLoader
-        css={override}
-        size={150}
-        color={'#eb4034'}
-        loading={loading}
-      />
-    ) : (
-      <Grid container spacing={3}>
-        {posts
-          .slice(
-            this.state.listPosts.start,
-            this.props.noOfPosts || this.state.listPosts.end
-          )
-          .map((post) => (
-            <Grid item xs={12} sm={6} md={4} key={post.postId}>
-              <PostThum post={post} />
-            </Grid>
-          ))}
-      </Grid>
-    );
+
+    // console.log(this.props.firestore);
+    // const loading = this.props.firestore.status.requesting.blogPsts;
+    // const { posts } = this.props.firestore.ordered.blogPost;
+
+    // let recentPosts = loading ? (
+    //   <ScaleLoader
+    //     css={override}
+    //     size={150}
+    //     color={'#eb4034'}
+    //     loading={loading}
+    //   />
+    // ) : (
+    //   <Grid container spacing={3}>
+    //     {posts
+    //       .slice(
+    //         this.state.listPosts.start,
+    //         this.props.noOfPosts || this.state.listPosts.end
+    //       )
+    //       .map((post) => (
+    //         <Grid item xs={12} sm={6} md={4} key={post.postId}>
+    //           <PostThum post={post} />
+    //         </Grid>
+    //       ))}
+    //   </Grid>
+    // );
+
     return (
       <>
         <Container maxWidth="lg" className={classes.container}>
@@ -69,7 +75,7 @@ class Weblog extends Component {
             Blog post
           </Typography>
 
-          {recentPosts}
+          {/* {recentPosts} */}
         </Container>
       </>
     );
@@ -82,7 +88,12 @@ Weblog.propType = {
   weblog: PropTypes.object.isRequired,
 };
 const mapStateProps = (state) => ({
-  weblog: state.weblog,
+  firestore: state.firestore,
 });
 
-export default connect(mapStateProps, { getPosts })(withStyles(styles)(Weblog));
+export default withRouter(
+  compose(
+    firestoreConnect([{ collection: 'blogPosts' }]),
+    connect(mapStateProps, { getPosts })
+  )(withStyles(styles)(Weblog))
+);

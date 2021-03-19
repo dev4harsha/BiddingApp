@@ -13,6 +13,14 @@ import axios from 'axios';
 import { ThemeProvider as MuiThemeProvider } from '@material-ui/core/styles';
 import themeFile from './theme';
 import createMuiTheme from '@material-ui/core/styles/createMuiTheme';
+import {
+  createFirestoreInstance,
+  getFirestore,
+  reduxFirestore,
+} from 'redux-firestore';
+import { ReactReduxFirebaseProvider, getFirebase } from 'react-redux-firebase';
+import fbconfig from './config/fbConfig';
+import firebase from 'firebase/app';
 const theme = createMuiTheme(themeFile);
 
 store.dispatch(getPosts());
@@ -32,11 +40,19 @@ if (token) {
   }
 }
 
+const rrfProps = {
+  firebase,
+  config: fbconfig,
+  dispatch: store.dispatch,
+  createFirestoreInstance,
+};
 ReactDOM.render(
   <Router>
     <MuiThemeProvider theme={theme}>
       <Provider store={store}>
-        <App />
+        <ReactReduxFirebaseProvider {...rrfProps}>
+          <App />
+        </ReactReduxFirebaseProvider>
       </Provider>
     </MuiThemeProvider>
   </Router>,
