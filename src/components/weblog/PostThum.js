@@ -36,7 +36,7 @@ class PostThum extends Component {
   }
 
   viewPost = (postId) => {
-    this.props.history.push(`/BlogPost/${postId}`, { postId: postId });
+    this.props.history.push(`/BlogPost/${postId}`);
   };
   render() {
     const {
@@ -76,7 +76,7 @@ class PostThum extends Component {
             </CardContent>
           </CardActionArea>
           <CardActions>
-            <PostActions postId={postId} />
+            <PostActions postId={postId} likes={likes} />
           </CardActions>
         </Card>
       </>

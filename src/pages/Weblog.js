@@ -29,13 +29,11 @@ const override = `
 class Weblog extends Component {
   constructor() {
     super();
-    this.state = {
-      listPosts: { start: 0, end: 10 },
-    };
+    this.state = {};
   }
 
-  componentDidMount() {
-    // this.props.getPosts();
+  componentWillMount() {
+    this.props.getPosts(this.props.limitPosts || 6);
   }
 
   render() {
@@ -50,16 +48,11 @@ class Weblog extends Component {
       />
     ) : (
       <Grid container spacing={3}>
-        {posts
-          .slice(
-            this.state.listPosts.start,
-            this.props.noOfPosts || this.state.listPosts.end
-          )
-          .map((post) => (
-            <Grid item xs={12} sm={6} md={4} key={post.postId}>
-              <PostThum post={post} />
-            </Grid>
-          ))}
+        {posts.map((post) => (
+          <Grid item xs={12} sm={6} md={4} key={post.postId}>
+            <PostThum post={post} />
+          </Grid>
+        ))}
       </Grid>
     );
     return (

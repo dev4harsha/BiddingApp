@@ -31,7 +31,7 @@ const {
 } = require('./handler/user');
 
 //common
-app.get('/auctions', getAllAuctions); //done
+app.get('/auctions/:limitAuctions', getAllAuctions); //done
 app.get('/auction/:auctionId', getAuction); //done
 
 //auth user domain
@@ -43,8 +43,8 @@ app.get('/auction/:auctionId/delete', FBAuth, deleteAuction); //done
 
 //blogPost
 app.post('/blogPost', FBAuth, postOneBlog);
-app.get('/blogPosts', getAllBlogPosts);
-app.get('/blogPost/:postId', FBAuth, getAuthUserBlogPost);
+app.get('/blogPosts/:limitPosts', getAllBlogPosts);
+app.get('/blogPost/:postId', getAuthUserBlogPost);
 app.post('/blogPost/:postId/update', FBAuth, postUpdateBlog);
 app.get('/post/:postId/like', FBAuth, likePost);
 

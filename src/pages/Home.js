@@ -27,11 +27,11 @@ function Home() {
     <>
       <Container maxwidth="lg" className={classes.container}>
         <Grid item>
-          <Auction noOfAuctions={5} />
+          <Auction limitAuctions={1} />
         </Grid>
 
         <Grid item>
-          <Weblog noOfPosts={3} />
+          <Weblog limitPosts={3} />
         </Grid>
       </Container>
     </>

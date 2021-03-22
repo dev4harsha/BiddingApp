@@ -4,6 +4,7 @@ const { db, admin } = require('../util/admin');
 exports.getAllAuctions = (req, res) => {
   db.collection('auctions')
     .orderBy('createdAt', 'desc')
+    .limit(Number(req.params.limitAuctions))
     .where('active', '==', true)
     .where('approval', '==', true)
     .get()

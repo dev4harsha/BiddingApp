@@ -18,7 +18,7 @@ import UserProfile from './pages/UserProfile';
 
 import 'react-toastify/dist/ReactToastify.css';
 import UserAuth from './pages/UserAuth';
-import jwtDecode from 'jwt-decode';
+
 import AuthRoute from './AuthRoute';
 //theme
 

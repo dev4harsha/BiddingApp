@@ -94,6 +94,7 @@ exports.postOneBlog = (req, res) => {
 exports.getAllBlogPosts = (req, res) => {
   db.collection('blogPosts')
     .orderBy('createdAt', 'desc')
+    .limit(Number(req.params.limitPosts))
     .get()
     .then((data) => {
       let blogPosts = [];

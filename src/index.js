@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './App';
 import { BrowserRouter as Router } from 'react-router-dom';
-
+import jwtDecode from 'jwt-decode';
 import { Provider } from 'react-redux';
 import store from './redux/store';
 import { SET_AUTHENTICATED } from './redux/types';
@@ -15,8 +15,8 @@ import themeFile from './theme';
 import createMuiTheme from '@material-ui/core/styles/createMuiTheme';
 const theme = createMuiTheme(themeFile);
 
-store.dispatch(getPosts());
-store.dispatch(getAuctions());
+// store.dispatch(getPosts());
+// store.dispatch(getAuctions());
 
 const token = localStorage.FBIdToken;
 if (token) {

@@ -24,12 +24,10 @@ justify-content: center;
 border-color: red;
 `;
 class Auction extends Component {
-  state = {
-    auctionsListPoints: { start: 0, end: 10 },
-  };
+  state = {};
 
   componentWillMount() {
-    // this.props.getAuctions();
+    this.props.getAuctions(this.props.limitAuctions || 10);
   }
   render() {
     const { classes } = this.props;
@@ -44,14 +42,9 @@ class Auction extends Component {
       />
     ) : (
       <>
-        {auctions
-          .slice(
-            auctionsListPoints.start,
-            this.props.noOfAuctions || auctionsListPoints.end
-          )
-          .map((auction) => (
-            <AuctionCommon key={auction.auctionId} auction={auction} />
-          ))}
+        {auctions.map((auction) => (
+          <AuctionCommon key={auction.auctionId} auction={auction} />
+        ))}
       </>
     );
     return (

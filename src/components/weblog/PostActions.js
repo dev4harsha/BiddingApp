@@ -32,12 +32,8 @@ class PostActions extends Component {
   };
 
   render() {
-    const { classes } = this.props;
+    const { classes, likes, postId } = this.props;
     const { authenticated } = this.props.user;
-
-    const likes = this.props.posts.find(
-      (post) => post.postId === this.props.postId
-    ).likes;
 
     const likeUnlikeButtons = !authenticated ? (
       <>
