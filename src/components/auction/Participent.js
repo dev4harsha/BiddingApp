@@ -16,6 +16,7 @@ import {
 } from '@material-ui/core';
 import { Component } from 'react';
 import { render } from 'react-dom';
+import moment from 'moment';
 
 const styles = (theme) => ({
   root: {
@@ -38,7 +39,7 @@ const styles = (theme) => ({
 
 class Participent extends Component {
   render() {
-    const { classes } = this.props;
+    const { classes, bidData } = this.props;
     return (
       <Grid
         className={classes.root}
@@ -48,13 +49,15 @@ class Participent extends Component {
       >
         <Grid item>
           <Typography variant="h6" align="center">
-            10:24:22 08/02/21
+            {moment
+              .unix(bidData.createdAt._seconds)
+              .format('MM/DD/YYYY h:mm:ss A')}
           </Typography>
         </Grid>
 
         <Grid item>
           <Typography variant="h6" align="center">
-            $82
+            {bidData.bidAmount}
           </Typography>
         </Grid>
 
@@ -62,12 +65,9 @@ class Participent extends Component {
           <List>
             <ListItem>
               <ListItemAvatar>
-                <Avatar
-                  alt="Travis Howard"
-                  src="https://i1.wp.com/digital-photography-school.com/wp-content/uploads/2017/05/white-background-headshot-717Bpx.jpg?resize=717%2C513&ssl=1"
-                />
+                <Avatar alt="Travis Howard" src={bidData.imageurl} />
               </ListItemAvatar>
-              <ListItemText>Stephani</ListItemText>
+              <ListItemText>{bidData.userName}</ListItemText>
             </ListItem>
           </List>
         </Grid>

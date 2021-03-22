@@ -1,7 +1,14 @@
-import { SET_AUCTIONS, LOADING_AUCTIONS } from '../types';
+import {
+  SET_AUCTIONS,
+  SET_AUCTION,
+  LOADING_AUCTIONS,
+  SET_BID,
+  CLEAR_AUCTION,
+} from '../types';
 
 const initialState = {
   auctions: [],
+  auction: {},
   loading: false,
 };
 
@@ -18,7 +25,18 @@ export default function (state = initialState, action) {
         auctions: action.payload,
         loading: false,
       };
-
+    case SET_AUCTION:
+      return {
+        ...state,
+        auction: action.payload,
+        loading: false,
+      };
+    case CLEAR_AUCTION:
+      return {
+        ...state,
+        auction: [],
+        loading: false,
+      };
     default:
       return state;
   }

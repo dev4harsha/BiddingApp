@@ -71,9 +71,7 @@ const styles = (theme) => ({
 class AuctionCommon extends Component {
   viweAuction = (value) => {
     //this.props.history.push(/auction/:auctionId/bid"`, { postId: postId });
-    this.props.history.push(`/auction/${this.props.auction.auctionId}/bid`, {
-      auctionId: this.props.auction.auctionId,
-    });
+    this.props.history.push(`/auction/${this.props.auction.auctionId}/bid`);
   };
 
   render() {

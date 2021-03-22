@@ -116,12 +116,21 @@ exports.getAuction = (req, res) => {
         .collection('bids')
         .orderBy('createdAt', 'desc')
         .where('auctionId', '==', req.params.auctionId)
+        .limit(5)
         .get();
     })
     .then((data) => {
       auctionData.bidsData = [];
       data.forEach((doc) => {
-        auctionData.bidsData.push(doc.data());
+        auctionData.bidsData.push({
+          imageUrl: doc.data().imageUrl,
+          bidAmount: doc.data().bidAmount,
+          createdAt: doc.data().createdAt,
+          auctionId: doc.data().auctionId,
+          userName: doc.data().userName,
+          userId: doc.data().userId,
+          bidId: doc.id,
+        });
       });
       return res.json(auctionData);
     })
@@ -169,49 +178,21 @@ exports.bidOnAuction = (req, res) => {
           .status(404)
           .json({ error: 'Bid amount is low, increase bid amount!' });
       }
-
       return db
         .collection('bids')
-        .where('auctionId', '==', req.params.auctionId)
-        .where('userId', '==', req.user.uid)
-        .limit(1)
-        .get()
+        .add(newBid)
         .then((data) => {
-          // return res.json(data.docs[0].id);
-          //console.log(data.docs[0].id);
-          if (data.empty) {
-            return db
-              .collection('bids')
-              .add(newBid)
-              .then((data) => {
-                //auctionData.bids++;
-                doc.ref.update({
-                  bids: doc.data().bids + 1,
-                  maxBidId: data.id,
-                  maxBid: req.body.bidAmount,
-                });
-              });
-          }
-
-          return db
-            .doc(`/bids/${data.docs[0].id}`)
-            .update({ bidAmount: req.body.bidAmount })
-            .then(() => {
-              //return db.doc(`/domains/${req.params.domainId}`)
-              //console.log(data.id);
-              doc.ref.update({
-                maxBid: req.body.bidAmount,
-                maxBidId: data.docs[0].id,
-              });
-            });
+          //auctionData.bids++;
+          doc.ref.update({
+            bids: doc.data().bids + 1,
+            maxBidId: data.id,
+            maxBid: req.body.bidAmount,
+          });
+          newBid.bidId = data.id;
         })
-
         .then(() => {
-          return res.json(newBid);
-        })
-        .catch((err) => {
-          console.log(err);
-          return res.status(500).json({ error: 'Somthing went wrong' });
+          // return res.json(newBid);
+          res.status(200).json({ message: 'Bid Placed successfully' });
         });
     })
     .catch((err) => {

@@ -67,7 +67,6 @@ class BlogPost extends Component {
   }
   componentDidMount() {
     this.props.getPost(this.props.match.params.postId);
-    console.log(history.state.state.post);
 
     this.props.getPosts(3);
   }
