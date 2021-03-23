@@ -1,5 +1,5 @@
 import { Component } from 'react';
-import { Route } from 'react-router-dom';
+import { Route, withRouter } from 'react-router-dom';
 import './App.css';
 //Pages
 import Contact from './pages/Contact';
