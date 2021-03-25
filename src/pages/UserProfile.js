@@ -22,7 +22,11 @@ import AccountBoxIcon from '@material-ui/icons/AccountBox';
 import EditIcon from '@material-ui/icons/Edit';
 import TimelineIcon from '@material-ui/icons/Timeline';
 import DnsIcon from '@material-ui/icons/Dns';
-
+import AddAuction from '../components/userProfile/AddAuction';
+import store from '../redux/store';
+import { SET_USER_MENU_INDEX } from '../redux/types';
+import { connect } from 'react-redux';
+import EditDetails from '../components/userProfile/EditDetails';
 const styles = (theme) => ({
   ...theme.spreadThis,
   container: {
@@ -46,17 +50,35 @@ class UserProfile extends Component {
     super();
     this.state = {
       value: '1',
-      open: false,
-      selectedIndex: 1,
+      openAuction: false,
+      openHistory: false,
+      openProfile: false,
     };
+    this.handleListItemClick = this.handleListItemClick.bind(this);
   }
 
+  componentWillMount() {
+    this.setState({
+      openAuction: this.props.userMenuIndex === 1 ? true : false,
+    });
+    this.setState({
+      openHistory: this.props.userMenuIndex === 2 ? true : false,
+    });
+    this.setState({
+      openProfile: this.props.userMenuIndex === 3 ? true : false,
+    });
+  }
   handleListItemClick = (event, index) => {
-    this.setState({ selectedIndex: index });
-    console.log(index);
-    index === 2 || index === 20 || index === 21
-      ? this.setState({ open: true })
-      : this.setState({ open: false });
+    store.dispatch({ type: SET_USER_MENU_INDEX, payload: index });
+    (index === 1 && !this.state.openAuction) || index === 10
+      ? this.setState({ openAuction: true })
+      : this.setState({ openAuction: false });
+    (index === 2 && !this.state.openHistory) || index === 20 || index === 21
+      ? this.setState({ openHistory: true })
+      : this.setState({ openHistory: false });
+    (index === 3 && !this.state.openProfile) || index === 30
+      ? this.setState({ openProfile: true })
+      : this.setState({ openProfile: false });
   };
   handleChange = (event, newValue) => {
     this.setState({ value: newValue });
@@ -64,17 +86,41 @@ class UserProfile extends Component {
 
   render() {
     const { classes } = this.props;
-    const { open, selectedIndex } = this.state;
+    const { openHistory, openAuction, openProfile } = this.state;
+    let selectedIndex = this.props.userMenuIndex;
     let selectedMenuView;
     switch (selectedIndex) {
       case 1:
-        selectedMenuView = <ViewAuction />;
+      case 10:
+        selectedIndex === 10
+          ? (selectedMenuView = (
+              <>
+                <ViewAuction />
+                <AddAuction />
+              </>
+            ))
+          : (selectedMenuView = <ViewAuction />);
+
         break;
+
       case 2:
         selectedMenuView = <UserHistory />;
         break;
       case 3:
-        selectedMenuView = <ProfileDetails />;
+      case 30:
+        selectedIndex === 30
+          ? (selectedMenuView = (
+              <>
+                <ProfileDetails />
+                <EditDetails />
+              </>
+            ))
+          : (selectedMenuView = (
+              <>
+                <ProfileDetails />
+              </>
+            ));
+
         break;
 
       default:
@@ -95,8 +141,23 @@ class UserProfile extends Component {
                     <DnsIcon />
                   </ListItemIcon>
                   <ListItemText primary="Auctions" />
+                  {openAuction ? <ExpandLess /> : <ExpandMore />}
                 </ListItem>
-
+                <Collapse in={openAuction} timeout="auto" unmountOnExit>
+                  <List component="div" disablePadding>
+                    <ListItem
+                      className={classes.nested}
+                      selected={selectedIndex === 10}
+                      button
+                      onClick={(event) => this.handleListItemClick(event, 10)}
+                    >
+                      <ListItemIcon>
+                        <EditIcon />
+                      </ListItemIcon>
+                      <ListItemText primary="Add to Auction" />
+                    </ListItem>
+                  </List>
+                </Collapse>
                 <ListItem
                   button
                   onClick={(event) => this.handleListItemClick(event, 2)}
@@ -106,9 +167,9 @@ class UserProfile extends Component {
                     <TimelineIcon />
                   </ListItemIcon>
                   <ListItemText primary="History" />
-                  {open ? <ExpandLess /> : <ExpandMore />}
+                  {openHistory ? <ExpandLess /> : <ExpandMore />}
                 </ListItem>
-                <Collapse in={open} timeout="auto" unmountOnExit>
+                <Collapse in={openHistory} timeout="auto" unmountOnExit>
                   <List component="div" disablePadding>
                     <ListItem
                       className={classes.nested}
@@ -143,8 +204,24 @@ class UserProfile extends Component {
                     <AccountBoxIcon />
                   </ListItemIcon>
                   <ListItemText primary="Profile" />
+                  {openProfile ? <ExpandLess /> : <ExpandMore />}
                 </ListItem>
               </List>
+              <Collapse in={openProfile} timeout="auto" unmountOnExit>
+                <List component="div" disablePadding>
+                  <ListItem
+                    className={classes.nested}
+                    selected={selectedIndex === 30}
+                    button
+                    onClick={(event) => this.handleListItemClick(event, 30)}
+                  >
+                    <ListItemIcon>
+                      <EditIcon />
+                    </ListItemIcon>
+                    <ListItemText primary="Edit Profile" />
+                  </ListItem>
+                </List>
+              </Collapse>
             </Grid>
             <Grid className={classes.subGrid} item sm={8} md={9} md={9}>
               {selectedMenuView}
@@ -155,5 +232,7 @@ class UserProfile extends Component {
     );
   }
 }
-
-export default withStyles(styles)(UserProfile);
+const mapStateToProps = (state) => ({
+  userMenuIndex: state.UI.userMenuIndex,
+});
+export default connect(mapStateToProps, {})(withStyles(styles)(UserProfile));

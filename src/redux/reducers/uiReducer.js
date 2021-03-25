@@ -4,12 +4,14 @@ import {
   LOADING_UI,
   SET_MESSAGE,
   CLEAR_MESSAGE,
+  SET_USER_MENU_INDEX,
 } from '../types';
 
 const initialState = {
   loading: false,
   errors: null,
   message: null,
+  userMenuIndex: 1,
 };
 
 export default function (state = initialState, action) {
@@ -42,6 +44,11 @@ export default function (state = initialState, action) {
         ...state,
         loading: false,
         message: null,
+      };
+    case SET_USER_MENU_INDEX:
+      return {
+        ...state,
+        userMenuIndex: action.payload,
       };
     default:
       return state;

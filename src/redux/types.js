@@ -10,6 +10,7 @@ export const LOADING_UI = 'LOADING_UI';
 export const CLEAR_ERRORS = 'CLEAR_ERRORS';
 export const SET_MESSAGE = 'SET_MESSAGE';
 export const CLEAR_MESSAGE = 'CLEAR_MESSAGE';
+export const SET_USER_MENU_INDEX = 'SET_USER_MENU_INDEX';
 //weblog reducer types
 export const SET_POSTS = 'SET_POSTS';
 export const SET_POST = 'SET_POST';

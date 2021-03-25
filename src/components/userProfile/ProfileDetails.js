@@ -167,9 +167,6 @@ class ProfileDetails extends Component {
                 </label>
               </>
             </Grid>
-            <Grid item className={classes.inputDiv}>
-              <EditDetails />
-            </Grid>
           </Grid>
         </Grid>
       </Paper>

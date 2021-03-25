@@ -9,14 +9,15 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 
 import { connect } from 'react-redux';
-import { editUserDetails } from '../../redux/actions/userActions';
-import { Button, CircularProgress } from '@material-ui/core';
 import { SET_USER_MENU_INDEX } from '../../redux/types';
 import store from '../../redux/store';
+
+import { editUserDetails } from '../../redux/actions/userActions';
+import { Button, CircularProgress } from '@material-ui/core';
 const style = (theme) => ({
   ...theme.spreadThis,
 });
-class EditDetails extends Component {
+class AddAuction extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -29,7 +30,7 @@ class EditDetails extends Component {
   }
 
   handleClose = () => {
-    store.dispatch({ type: SET_USER_MENU_INDEX, payload: 3 });
+    store.dispatch({ type: SET_USER_MENU_INDEX, payload: 1 });
     this.setState({ open: false });
   };
   handleChange = (event) => {
@@ -37,6 +38,9 @@ class EditDetails extends Component {
       [event.target.name]: event.target.value,
     });
   };
+  componentDidMount() {
+    this.mapUserDetailsToState(this.props.credentials);
+  }
 
   componentWillReceiveProps(nextProps) {
     console.log(nextProps);
@@ -68,6 +72,7 @@ class EditDetails extends Component {
       classes,
       user: { loading },
     } = this.props;
+
     return (
       <>
         <Dialog
@@ -136,10 +141,10 @@ const mapStateToProps = (state) => ({
   credentials: state.user.credentials,
   user: state.user,
 });
-EditDetails.propTypes = {
+AddAuction.propTypes = {
   editUserDetails: PropTypes.func.isRequired,
   classes: PropTypes.object.isRequired,
 };
 export default connect(mapStateToProps, { editUserDetails })(
-  withStyles(style)(EditDetails)
+  withStyles(style)(AddAuction)
 );
