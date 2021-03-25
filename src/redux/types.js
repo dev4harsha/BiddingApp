@@ -20,3 +20,4 @@ export const LOADING_AUCTIONS = 'LOADING_AUCTIONS';
 export const SET_AUCTION = 'SET_AUCTION';
 export const SET_BID = 'SET_BID';
 export const CLEAR_AUCTION = 'CLEAR_AUCTION';
+export const SET_USER_AUCTIONS = 'SET_USER_AUCTIONS';

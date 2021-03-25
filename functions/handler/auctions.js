@@ -34,11 +34,14 @@ exports.getAuthUserAllAuctions = (req, res) => {
       let auctions = [];
       data.forEach((doc) => {
         auctions.push({
-          domainId: doc.id,
+          auctionId: doc.id,
           auctionName: doc.data().auctionName,
           initAmount: doc.data().initAmount,
           endDateTime: doc.data().endDateTime,
           auctionType: doc.data().auctionType,
+          createdAt: doc.data().createdAt,
+          itemDescription: doc.data().itemDescription,
+          maxBid: doc.data().maxBid,
           active: doc.data().active,
           approval: doc.data().approval,
           bids: doc.data().bids,

@@ -1,5 +1,5 @@
 import { Component } from 'react';
-import { Route, withRouter } from 'react-router-dom';
+import { Route, useHistory, withRouter } from 'react-router-dom';
 import './App.css';
 //Pages
 import Contact from './pages/Contact';
@@ -41,6 +41,7 @@ class App extends Component {
         <Route path="/auction/:auctionId/bid" component={Bid} />
 
         <AuthRoute path="/user" component={UserProfile} />
+        <Footer />
       </>
     );
   }

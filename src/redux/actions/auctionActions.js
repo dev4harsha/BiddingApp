@@ -7,6 +7,7 @@ import {
   CLEAR_ERRORS,
   LOADING_UI,
   SET_MESSAGE,
+  SET_USER_AUCTIONS,
 } from '../types';
 import axios from 'axios';
 
@@ -25,6 +26,18 @@ export const postBid = (bidAmount, auctionId) => (dispatch) => {
       dispatch({ type: SET_ERRORS, payload: err.response.data });
     });
 };
+export const getUserAuctions = () => (dispatch) => {
+  dispatch({ type: LOADING_AUCTIONS });
+  axios
+    .get('/userAuctions')
+    .then((res) => {
+      dispatch({ type: SET_USER_AUCTIONS, payload: res.data });
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+};
+
 export const getAuctions = (limitAuctions) => (dispatch) => {
   dispatch({ type: LOADING_AUCTIONS });
   axios

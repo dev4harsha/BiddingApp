@@ -10,18 +10,21 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 
 import { connect } from 'react-redux';
 import { editUserDetails } from '../../redux/actions/userActions';
-import { Button } from '@material-ui/core';
+import { Button, CircularProgress } from '@material-ui/core';
 const style = (theme) => ({
   ...theme.spreadThis,
 });
 class EditDetails extends Component {
-  state = {
-    country: '',
-    firstName: '',
-    lastName: '',
-    mobile: '',
-    open: false,
-  };
+  constructor(props) {
+    super(props);
+    this.state = {
+      country: '',
+      firstName: '',
+      lastName: '',
+      mobile: '',
+      open: false,
+    };
+  }
   handleOpen = () => {
     this.setState({ open: true });
     this.mapUserDetailsToState(this.props.credentials);
@@ -34,6 +37,10 @@ class EditDetails extends Component {
       [event.target.name]: event.target.value,
     });
   };
+
+  componentWillReceiveProps(nextProps) {
+    console.log(nextProps);
+  }
   handleSubmit = () => {
     const userDetails = {
       country: this.state.country,
@@ -57,7 +64,10 @@ class EditDetails extends Component {
     });
   };
   render() {
-    const { classes } = this.props;
+    const {
+      classes,
+      user: { loading },
+    } = this.props;
     return (
       <>
         <Button
@@ -65,8 +75,9 @@ class EditDetails extends Component {
           color="primary"
           component="span"
           onClick={this.handleOpen}
+          disabled={loading}
         >
-          Edit Details
+          {loading ? <CircularProgress size={25} /> : `Edit Details`}
         </Button>
         <Dialog
           open={this.state.open}
@@ -132,6 +143,7 @@ class EditDetails extends Component {
 }
 const mapStateToProps = (state) => ({
   credentials: state.user.credentials,
+  user: state.user,
 });
 EditDetails.propTypes = {
   editUserDetails: PropTypes.func.isRequired,

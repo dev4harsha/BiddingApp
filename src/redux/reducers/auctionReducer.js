@@ -4,12 +4,14 @@ import {
   LOADING_AUCTIONS,
   SET_BID,
   CLEAR_AUCTION,
+  SET_USER_AUCTIONS,
 } from '../types';
 
 const initialState = {
   auctions: [],
   auction: {},
   loading: false,
+  userAuctions: [],
 };
 
 export default function (state = initialState, action) {
@@ -37,6 +39,13 @@ export default function (state = initialState, action) {
         auction: [],
         loading: false,
       };
+    case SET_USER_AUCTIONS:
+      return {
+        ...state,
+        userAuctions: action.payload,
+        loading: false,
+      };
+
     default:
       return state;
   }

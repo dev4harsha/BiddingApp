@@ -79,7 +79,7 @@ class ProfileDetails extends Component {
       },
     } = this.props;
 
-    let profileMarkUp = !loading ? (
+    let profileMarkUp = (
       <Paper className={classes.paper}>
         <Grid container className={classes.gridContainer}>
           <Grid item xs={12} sm={12} md={4}>
@@ -156,7 +156,12 @@ class ProfileDetails extends Component {
                   onChange={this.handleImageChange}
                 />
                 <label htmlFor="imageInput">
-                  <Button variant="contained" color="primary" component="span">
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    component="span"
+                    disabled={loading}
+                  >
                     Change Image
                   </Button>
                 </label>
@@ -168,15 +173,8 @@ class ProfileDetails extends Component {
           </Grid>
         </Grid>
       </Paper>
-    ) : (
-      <ScaleLoader
-        css={override}
-        size={150}
-        color={'#eb4034'}
-        loading={this.loading}
-      />
     );
-    return profileMarkUp;
+    return <>{profileMarkUp}</>;
   }
 }
 
