@@ -5,6 +5,7 @@ import {
   LOADING_UI,
   SET_UNAUTHENTICATED,
   LOADING_USER,
+  SET_MESSAGES,
 } from '../types';
 import axios from 'axios';
 export const loginUser = (userData) => (dispatch) => {
@@ -61,8 +62,9 @@ export const uploadImage = (formData) => (dispatch) => {
   dispatch({ type: LOADING_USER });
   axios
     .post('/user/image', formData)
-    .then(() => {
+    .then((res) => {
       dispatch(getUserData());
+      dispatch({ type: SET_MESSAGES, payload: res.data });
     })
     .catch((err) => console.log(err));
 };
@@ -71,8 +73,9 @@ export const editUserDetails = (userDetails) => (dispatch) => {
   dispatch({ type: LOADING_USER });
   axios
     .post('/user', userDetails)
-    .then(() => {
+    .then((res) => {
       dispatch(getUserData());
+      dispatch({ type: SET_MESSAGES, payload: res.data });
     })
     .catch((err) => console.log(err));
 };

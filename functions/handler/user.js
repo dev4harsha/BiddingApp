@@ -77,7 +77,7 @@ exports.addUserDetails = (req, res) => {
   db.doc(`/users/${req.user.uid}`)
     .update(userDetails)
     .then(() => {
-      return res.json({ message: 'Details added successfully' });
+      return res.json({ message: 'Profile details updated successfully' });
     })
     .catch((err) => {
       console.error(err);
@@ -179,7 +179,7 @@ exports.uploadImage = (req, res) => {
         return db.doc(`/users/${req.user.uid}`).update({ imageUrl });
       })
       .then(() => {
-        return res.json({ message: 'image uploaded successfully' });
+        return res.json({ message: 'Profile image changed!' });
       })
       .catch((err) => {
         console.error(err);

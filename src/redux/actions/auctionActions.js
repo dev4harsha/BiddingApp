@@ -6,10 +6,11 @@ import {
   SET_ERRORS,
   CLEAR_ERRORS,
   LOADING_UI,
-  SET_MESSAGE,
+  SET_MESSAGES,
   SET_USER_AUCTIONS,
   CHANGE_AUCTION_STATE,
   DELETE_USER_AUCTION,
+  UPDATE_USER_AUCTION,
 } from '../types';
 import axios from 'axios';
 
@@ -20,7 +21,7 @@ export const addNewAuction = (newAuctionDetails) => (dispatch) => {
     .post(`/auction`, newAuctionDetails)
     .then((res) => {
       dispatch(getUserAuctions());
-      dispatch({ type: SET_MESSAGE, payload: res.data });
+      dispatch({ type: SET_MESSAGES, payload: res.data });
       dispatch({ type: CLEAR_ERRORS });
     })
     .catch((err) => {
@@ -33,7 +34,24 @@ export const auctionStatusChange = (auctionId, index) => (dispatch) => {
     .get(`/auction/${auctionId}/activeDeactive`)
     .then((res) => {
       dispatch({ type: CHANGE_AUCTION_STATE, payload: index });
-      dispatch({ type: SET_MESSAGE, payload: res.data });
+      dispatch({ type: SET_MESSAGES, payload: res.data.message });
+    })
+    .catch((err) => {
+      console.log(err);
+      dispatch({ type: SET_ERRORS, payload: err.response.data });
+    });
+};
+export const updateAuctionDetails = (updateAuctionDetails, index) => (
+  dispatch
+) => {
+  axios
+    .post(`/auction/update`, updateAuctionDetails)
+    .then((res) => {
+      dispatch({
+        type: UPDATE_USER_AUCTION,
+        payload: { index: index, data: res.data.data },
+      });
+      dispatch({ type: SET_MESSAGES, payload: res.data.message });
     })
     .catch((err) => {
       console.log(err);
@@ -45,7 +63,7 @@ export const deleteUserAuction = (auctionId, index) => (dispatch) => {
     .get(`/auction/${auctionId}/delete`)
     .then((res) => {
       dispatch({ type: DELETE_USER_AUCTION, payload: index });
-      dispatch({ type: SET_MESSAGE, payload: res.data });
+      dispatch({ type: SET_MESSAGES, payload: res.data });
     })
     .catch((err) => {
       console.log(err);
@@ -60,7 +78,7 @@ export const postBid = (bidAmount, auctionId) => (dispatch) => {
     .post(`/auction/${auctionId}/bid`, bidAmount)
     .then((res) => {
       dispatch(getAuction(auctionId));
-      dispatch({ type: SET_MESSAGE, payload: res.data });
+      dispatch({ type: SET_MESSAGES, payload: res.data });
       dispatch({ type: CLEAR_ERRORS });
     })
     .catch((err) => {

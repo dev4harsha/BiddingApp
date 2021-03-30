@@ -20,6 +20,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import UserAuth from './pages/UserAuth';
 
 import AuthRoute from './AuthRoute';
+import SnackBar from './components/SnackBar';
 
 //theme
 
@@ -43,6 +44,7 @@ class App extends Component {
 
         <AuthRoute path="/user" component={UserProfile} />
         <Footer />
+        <SnackBar />
       </>
     );
   }

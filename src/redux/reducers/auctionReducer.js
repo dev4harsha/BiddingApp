@@ -7,6 +7,7 @@ import {
   SET_USER_AUCTIONS,
   CHANGE_AUCTION_STATE,
   DELETE_USER_AUCTION,
+  UPDATE_USER_AUCTION,
 } from '../types';
 
 const initialState = {
@@ -60,6 +61,12 @@ export default function (state = initialState, action) {
       return {
         ...state,
       };
+    case UPDATE_USER_AUCTION:
+      state.userAuctions[action.payload.index] = action.payload.data;
+      return {
+        ...state,
+      };
+
     default:
       return state;
   }

@@ -20,6 +20,7 @@ const {
   getAuthUserAllAuctions,
   activeDeactiveAuction,
   deleteAuction,
+  updateAuction,
 } = require('./handler/auctions');
 const {
   signup,
@@ -34,10 +35,11 @@ const {
 app.get('/auctions/:limitAuctions', getAllAuctions); //done
 app.get('/auction/:auctionId', getAuction); //done
 
-//auth user domain
+//auth user auctions
 app.get('/userAuctions', FBAuth, getAuthUserAllAuctions); //done
 app.post('/auction', FBAuth, postOneAuction); //done
 app.post('/auction/:auctionId/bid', FBAuth, bidOnAuction);
+app.post('/auction/update', FBAuth, updateAuction);
 app.get('/auction/:auctionId/activeDeactive', FBAuth, activeDeactiveAuction); //done
 app.get('/auction/:auctionId/delete', FBAuth, deleteAuction); //done
 

@@ -8,8 +8,8 @@ export const LOADING_POSTS = 'LOADING_POSTS';
 export const SET_ERRORS = 'SET_ERRORS';
 export const LOADING_UI = 'LOADING_UI';
 export const CLEAR_ERRORS = 'CLEAR_ERRORS';
-export const SET_MESSAGE = 'SET_MESSAGE';
-export const CLEAR_MESSAGE = 'CLEAR_MESSAGE';
+export const SET_MESSAGES = 'SET_MESSAGES';
+export const CLEAR_MESSAGES = 'CLEAR_MESSAGES';
 export const SET_USER_MENU_INDEX = 'SET_USER_MENU_INDEX';
 //weblog reducer types
 export const SET_POSTS = 'SET_POSTS';
@@ -24,3 +24,4 @@ export const CLEAR_AUCTION = 'CLEAR_AUCTION';
 export const SET_USER_AUCTIONS = 'SET_USER_AUCTIONS';
 export const CHANGE_AUCTION_STATE = 'CHANGE_AUCTION_STATE';
 export const DELETE_USER_AUCTION = 'DELETE_USER_AUCTION';
+export const UPDATE_USER_AUCTION = 'UPDATE_USER_AUCTION';

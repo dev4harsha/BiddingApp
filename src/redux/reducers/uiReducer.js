@@ -2,15 +2,15 @@ import {
   SET_ERRORS,
   CLEAR_ERRORS,
   LOADING_UI,
-  SET_MESSAGE,
-  CLEAR_MESSAGE,
+  SET_MESSAGES,
+  CLEAR_MESSAGES,
   SET_USER_MENU_INDEX,
 } from '../types';
 
 const initialState = {
   loading: false,
   errors: null,
-  message: null,
+  messages: null,
   userMenuIndex: 1,
 };
 
@@ -33,17 +33,17 @@ export default function (state = initialState, action) {
         ...state,
         loading: true,
       };
-    case SET_MESSAGE:
+    case SET_MESSAGES:
       return {
         ...state,
         loading: false,
-        message: action.payload,
+        messages: action.payload,
       };
-    case CLEAR_MESSAGE:
+    case CLEAR_MESSAGES:
       return {
         ...state,
         loading: false,
-        message: null,
+        messages: null,
       };
     case SET_USER_MENU_INDEX:
       return {

@@ -31,7 +31,7 @@ class Navbar extends Component {
   };
 
   render() {
-    const { authenticated } = this.props;
+    const { authenticated, user } = this.props;
 
     return (
       <>
@@ -125,7 +125,11 @@ class Navbar extends Component {
                         onClick={this.closeMobileMenu}
                       >
                         <Button>
-                          <Avatar variant="circular" alt="Remy Sharp" src="" />
+                          <Avatar
+                            variant="circular"
+                            alt="Remy Sharp"
+                            src={user.credentials.imageUrl}
+                          />
                         </Button>
                       </Link>
                     </li>
@@ -168,6 +172,7 @@ class Navbar extends Component {
 }
 const mapStateToProps = (state) => ({
   authenticated: state.user.authenticated,
+  user: state.user,
 });
 const mapActionsToProps = { logoutUser };
 Navbar.propTypes = {

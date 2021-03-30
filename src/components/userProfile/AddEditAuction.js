@@ -12,11 +12,15 @@ import { connect } from 'react-redux';
 import { SET_USER_MENU_INDEX } from '../../redux/types';
 import store from '../../redux/store';
 import moment from 'moment';
-import { addNewAuction } from '../../redux/actions/auctionActions';
+import {
+  addNewAuction,
+  updateAuctionDetails,
+} from '../../redux/actions/auctionActions';
 import { Button, CircularProgress } from '@material-ui/core';
 import { DateTimePicker } from '@material-ui/pickers';
 import { CLEAR_ERRORS, CLEAR_MESSAGE } from '../../redux/types';
 import SnackBar from '../SnackBar';
+import { toast, ToastContainer } from 'react-toastify';
 
 const style = (theme) => ({
   ...theme.spreadThis,
@@ -24,13 +28,13 @@ const style = (theme) => ({
     marginTop: theme.spacing(1),
   },
 });
-class AddAuction extends Component {
+class AddEditAuction extends Component {
   constructor(props) {
     super(props);
     this.state = {
       auctionName: '',
       auctionType: '',
-      endDateTime: new Date(),
+      endDateTime: moment(),
       initAmount: '',
       itemDescription: '',
       buyNowAmount: '',
@@ -43,6 +47,7 @@ class AddAuction extends Component {
     store.dispatch({ type: SET_USER_MENU_INDEX, payload: 1 });
 
     this.setState({ open: false });
+    if (this.props.close) this.props.close();
   };
   handleChange = (event) => {
     this.setState({
@@ -62,23 +67,56 @@ class AddAuction extends Component {
       itemDescription: this.state.itemDescription,
       buyNowAmount: this.state.buyNowAmount,
     };
+    console.log(this.state.endDateTime);
     this.props.addNewAuction(newAuctionDetails);
   };
   componentWillReceiveProps(nextProps) {
     if (nextProps.UI.errors) {
       this.setState({ errors: nextProps.UI.errors });
     }
-    if (nextProps.UI.message) {
+    if (nextProps.UI.messages) {
       this.handleClose();
+      //toast.success(nextProps.UI.message.message);
     }
   }
-
+  componentDidMount() {
+    if (this.props.userAucton) {
+      this.setState({
+        auctionName: this.props.userAucton.auctionName,
+        auctionType: this.props.userAucton.auctionType,
+        endDateTime: moment(
+          new Date(
+            this.props.userAucton.endDateTime._seconds * 1000
+          ).toISOString()
+        ),
+        initAmount: this.props.userAucton.initAmount,
+        itemDescription: this.props.userAucton.itemDescription,
+        buyNowAmount: this.props.userAucton.buyNowAmount,
+      });
+    }
+  }
+  handleSubmitUpdate = () => {
+    const updateAuctionDetails = {
+      auctionName: this.state.auctionName,
+      auctionType: this.state.auctionType,
+      endDateTime: this.state.endDateTime,
+      initAmount: this.state.initAmount,
+      itemDescription: this.state.itemDescription,
+      buyNowAmount: this.state.buyNowAmount,
+      auctionId: this.props.userAucton.auctionId,
+    };
+    this.props.updateAuctionDetails(
+      updateAuctionDetails,
+      this.props.reduxIndex
+    );
+  };
   render() {
-    const { classes } = this.props;
+    const { classes, edit } = this.props;
     const { errors } = this.state;
 
     return (
       <>
+        <ToastContainer />
         <Dialog
           open={this.state.open}
           onClose={this.handleClose}
@@ -156,8 +194,11 @@ class AddAuction extends Component {
               label="Auction end date/time "
               className={classes.textField}
               value={this.state.endDateTime}
+              //value="2021-03-31T1:25:00"
+              format="MM/DD/yyyy hh:mm A"
               onChange={this.handleChangeEndDateTime}
               fullWidth
+              //ampm={false}
               helperText={errors.endDateTime}
               error={errors.endDateTime ? true : false}
             />
@@ -166,9 +207,15 @@ class AddAuction extends Component {
             <Button onClick={this.handleClose} color="primary">
               Cancel
             </Button>
-            <Button onClick={this.handleSubmit} color="primary">
-              Add Auction
-            </Button>
+            {edit ? (
+              <Button onClick={this.handleSubmitUpdate} color="primary">
+                Update Auction
+              </Button>
+            ) : (
+              <Button onClick={this.handleSubmit} color="primary">
+                Add Auction
+              </Button>
+            )}
           </DialogActions>
         </Dialog>
       </>
@@ -179,10 +226,11 @@ const mapStateToProps = (state) => ({
   credentials: state.user.credentials,
   UI: state.UI,
 });
-AddAuction.propTypes = {
+AddEditAuction.propTypes = {
   addNewAuction: PropTypes.func.isRequired,
   classes: PropTypes.object.isRequired,
 };
-export default connect(mapStateToProps, { addNewAuction })(
-  withStyles(style)(AddAuction)
-);
+export default connect(mapStateToProps, {
+  addNewAuction,
+  updateAuctionDetails,
+})(withStyles(style)(AddEditAuction));

@@ -22,7 +22,7 @@ import AccountBoxIcon from '@material-ui/icons/AccountBox';
 import EditIcon from '@material-ui/icons/Edit';
 import TimelineIcon from '@material-ui/icons/Timeline';
 import DnsIcon from '@material-ui/icons/Dns';
-import AddAuction from '../components/userProfile/AddAuction';
+import AddEditAuction from '../components/userProfile/AddEditAuction';
 import store from '../redux/store';
 import { SET_USER_MENU_INDEX } from '../redux/types';
 import { connect } from 'react-redux';
@@ -100,7 +100,7 @@ class UserProfile extends Component {
           ? (selectedMenuView = (
               <>
                 <ViewAuction />
-                <AddAuction />
+                <AddEditAuction />
               </>
             ))
           : (selectedMenuView = <ViewAuction />);
@@ -232,10 +232,6 @@ class UserProfile extends Component {
             </Grid>
           </Grid>
         </Container>
-        {message && (
-          <SnackBar message={message.message} type="success" open={true} />
-        )}
-        {errors && <SnackBar message={errors.error} type="error" open={true} />}
       </>
     );
   }

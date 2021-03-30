@@ -14,7 +14,7 @@ import RemoveIcon from '@material-ui/icons/Remove';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { CLEAR_ERRORS, CLEAR_MESSAGE } from '../../redux/types';
+import { CLEAR_ERRORS, CLEAR_MESSAGES } from '../../redux/types';
 import { getAuction, postBid } from '../../redux/actions/auctionActions';
 import { withRouter } from 'react-router';
 import { toast, ToastContainer } from 'react-toastify';
@@ -102,14 +102,6 @@ class AuctionDetails extends Component {
       this.setState({
         maxBid: parseFloat(nextProps.auction.auction.maxBid).toFixed(2),
       });
-    if (nextProps.UI.errors) {
-      toast.error(nextProps.UI.errors.error);
-      store.dispatch({ type: CLEAR_ERRORS });
-    }
-    if (nextProps.UI.message) {
-      toast.success(nextProps.UI.message.message);
-      store.dispatch({ type: CLEAR_MESSAGE });
-    }
   }
 
   render() {

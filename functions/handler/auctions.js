@@ -83,6 +83,50 @@ exports.postOneAuction = (req, res) => {
       console.log(err);
     });
 };
+exports.updateAuction = (req, res) => {
+  let auctionDetails = {
+    auctionName: req.body.auctionName,
+    auctionType: req.body.auctionType,
+    itemDescription: req.body.itemDescription,
+    initAmount: req.body.initAmount,
+    buyNowAmount: req.body.buyNowAmount,
+    endDateTime: admin.firestore.Timestamp.fromDate(
+      new Date(req.body.endDateTime)
+    ),
+  };
+
+  const auction = db.collection('auctions').doc(req.body.auctionId);
+  auction.get().then((doc) => {
+    const beforeSnap = doc.data();
+    if (!doc.exists) {
+      return res.status(400).json({ error: 'Auction not found!' });
+    }
+    const { valid, errors } = validateAddAuction(auctionDetails);
+    if (!valid) return res.status(400).json(errors);
+    auction
+      .update(auctionDetails)
+      .then(() => {
+        auctionDetails.auctionId = req.body.auctionId;
+        auctionDetails.createdAt = beforeSnap.createdAt;
+        auctionDetails.maxBid = beforeSnap.maxBid;
+        auctionDetails.active = beforeSnap.active;
+        auctionDetails.approval = beforeSnap.approval;
+        auctionDetails.bids = beforeSnap.bids;
+        return res.json({
+          message: {
+            message: `Auction ${req.body.auctionName} updated successfully `,
+          },
+          data: auctionDetails,
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+        return res
+          .status(500)
+          .json({ error: `${doc.data().auctionName} Update failed` });
+      });
+  });
+};
 exports.activeDeactiveAuction = (req, res) => {
   let status;
 
@@ -228,11 +272,11 @@ exports.deleteAuction = (req, res) => {
           error: `Can not delete, ${doc.data().bids} bids are available`,
         });
       }
-      return documnet.delete();
+      return documnet.delete().then(() => {
+        return res.json({ message: 'Auction deleted successfully' });
+      });
     })
-    .then(() => {
-      return res.json({ message: 'Auction deleted successfully' });
-    })
+
     .catch((err) => {
       console.error(err);
       return res.status(500).json({ error: err.code });

@@ -2,32 +2,47 @@ import { Snackbar } from '@material-ui/core';
 import Alert from '@material-ui/lab/Alert';
 import MuiAlert from '@material-ui/lab/Alert';
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 import store from '../redux/store';
-import { CLEAR_MESSAGE, CLEAR_ERRORS } from '../redux/types';
+import { CLEAR_MESSAGES, CLEAR_ERRORS } from '../redux/types';
 
-export class SnackBar extends Component {
+class SnackBar extends Component {
   state = {
     open: false,
     vertical: 'top',
     horizontal: 'right',
+    type: '',
+    message: '',
   };
   handleClose = () => {
     this.setState({ open: false });
-    store.dispatch({ type: CLEAR_MESSAGE });
+    store.dispatch({ type: CLEAR_MESSAGES });
     store.dispatch({ type: CLEAR_ERRORS });
   };
-  componentWillMount() {
-    this.setState({ open: this.props.open });
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.UI.errors && nextProps.UI.errors.error) {
+      this.setState({
+        type: 'error',
+        message: nextProps.UI.errors.error,
+        open: true,
+      });
+    }
+    if (nextProps.UI.messages && nextProps.UI.messages.message) {
+      this.setState({
+        type: 'success',
+        message: nextProps.UI.messages.message,
+        open: true,
+      });
+    }
   }
 
   render() {
-    const { type, message } = this.props;
-    const { open, vertical, horizontal } = this.state;
+    const { open, vertical, horizontal, message, type } = this.state;
     return (
       <Snackbar
         anchorOrigin={{ vertical, horizontal }}
-        autoHideDuration={6000}
+        autoHideDuration={5000}
         open={open}
         onClose={this.handleClose}
         anchorOrigin={{ vertical, horizontal }}
@@ -41,4 +56,7 @@ export class SnackBar extends Component {
   }
 }
 
-export default SnackBar;
+const mapStateToProps = (state) => ({
+  UI: state.UI,
+});
+export default connect(mapStateToProps, {})(SnackBar);
