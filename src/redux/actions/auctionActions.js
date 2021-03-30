@@ -8,8 +8,50 @@ import {
   LOADING_UI,
   SET_MESSAGE,
   SET_USER_AUCTIONS,
+  CHANGE_AUCTION_STATE,
+  DELETE_USER_AUCTION,
 } from '../types';
 import axios from 'axios';
+
+export const addNewAuction = (newAuctionDetails) => (dispatch) => {
+  dispatch({ type: LOADING_UI });
+
+  axios
+    .post(`/auction`, newAuctionDetails)
+    .then((res) => {
+      dispatch(getUserAuctions());
+      dispatch({ type: SET_MESSAGE, payload: res.data });
+      dispatch({ type: CLEAR_ERRORS });
+    })
+    .catch((err) => {
+      console.log(err);
+      dispatch({ type: SET_ERRORS, payload: err.response.data });
+    });
+};
+export const auctionStatusChange = (auctionId, index) => (dispatch) => {
+  axios
+    .get(`/auction/${auctionId}/activeDeactive`)
+    .then((res) => {
+      dispatch({ type: CHANGE_AUCTION_STATE, payload: index });
+      dispatch({ type: SET_MESSAGE, payload: res.data });
+    })
+    .catch((err) => {
+      console.log(err);
+      dispatch({ type: SET_ERRORS, payload: err.response.data });
+    });
+};
+export const deleteUserAuction = (auctionId, index) => (dispatch) => {
+  axios
+    .get(`/auction/${auctionId}/delete`)
+    .then((res) => {
+      dispatch({ type: DELETE_USER_AUCTION, payload: index });
+      dispatch({ type: SET_MESSAGE, payload: res.data });
+    })
+    .catch((err) => {
+      console.log(err);
+      dispatch({ type: SET_ERRORS, payload: err.response.data });
+    });
+};
 
 export const postBid = (bidAmount, auctionId) => (dispatch) => {
   dispatch({ type: LOADING_UI });

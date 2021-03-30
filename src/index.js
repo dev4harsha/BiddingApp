@@ -13,6 +13,8 @@ import axios from 'axios';
 import { ThemeProvider as MuiThemeProvider } from '@material-ui/core/styles';
 import themeFile from './theme';
 import createMuiTheme from '@material-ui/core/styles/createMuiTheme';
+import { MuiPickersUtilsProvider } from '@material-ui/pickers';
+import MomentUtils from '@date-io/moment';
 const theme = createMuiTheme(themeFile);
 
 // store.dispatch(getPosts());
@@ -36,7 +38,9 @@ ReactDOM.render(
   <Router>
     <MuiThemeProvider theme={theme}>
       <Provider store={store}>
-        <App />
+        <MuiPickersUtilsProvider utils={MomentUtils}>
+          <App />
+        </MuiPickersUtilsProvider>
       </Provider>
     </MuiThemeProvider>
   </Router>,

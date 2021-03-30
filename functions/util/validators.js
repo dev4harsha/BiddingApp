@@ -42,6 +42,46 @@ exports.validateLoginData = (userCred) => {
   };
 };
 
+exports.validateAddAuction = (newAuction) => {
+  let errors = {};
+  if (isEmpty(newAuction.auctionName)) {
+    errors.auctionName = 'Must not be empty';
+  }
+  if (isEmpty(newAuction.auctionType)) {
+    errors.auctionType = 'Must not be empty';
+  }
+  if (isEmpty(newAuction.itemDescription)) {
+    errors.itemDescription = 'Must not be empty';
+  } else if (newAuction.itemDescription.length > 400) {
+    errors.itemDescription =
+      'The description is too long, limit to 400 characters';
+  }
+
+  if (isEmpty(newAuction.initAmount)) {
+    errors.initAmount = 'Must not be empty';
+  } else if (
+    isNaN(parseFloat(newAuction.initAmount)) ||
+    parseFloat(newAuction.initAmount) < 0
+  ) {
+    errors.initAmount = 'Invalid amount';
+  }
+
+  if (isEmpty(newAuction.buyNowAmount)) {
+    errors.buyNowAmount = 'Must not be empty';
+  } else if (
+    isNaN(parseFloat(newAuction.buyNowAmount)) ||
+    parseFloat(newAuction.buyNowAmount) < 0.01
+  ) {
+    errors.buyNowAmount = 'Invalid amount';
+  }
+  if (new Date(newAuction.endDateTime) < new Date()) {
+    errors.endDateTime = 'Invalid Date';
+  }
+  return {
+    errors,
+    valid: Object.keys(errors).length === 0 ? true : false,
+  };
+};
 exports.reduceUserDetails = (data) => {
   let userDetails = {};
   if (!isEmpty(data.firstName)) userDetails.firstName = data.firstName;

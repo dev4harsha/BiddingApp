@@ -24,7 +24,7 @@ const style = (theme) => ({
     marginTop: theme.spacing(1),
   },
 });
-class AddAuction extends Component {
+class EditAuction extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -36,6 +36,11 @@ class AddAuction extends Component {
       buyNowAmount: '',
       open: true,
       errors: {},
+      // sanckActions: {
+      //   message: '',
+      //   type: '',
+      //   open: false,
+      // },
     };
   }
 
@@ -52,6 +57,9 @@ class AddAuction extends Component {
   handleChangeEndDateTime = (value) => {
     this.setState({ endDateTime: value });
   };
+  componentDidMount() {
+    //this.mapUserDetailsToState(this.props.credentials);
+  }
 
   handleSubmit = () => {
     const newAuctionDetails = {
@@ -72,7 +80,18 @@ class AddAuction extends Component {
       this.handleClose();
     }
   }
-
+  componentDidMount() {
+    const { credentials } = this.props;
+    this.mapUserDetailsToState(credentials);
+  }
+  mapUserDetailsToState = (credentials) => {
+    this.setState({
+      country: credentials.country ? credentials.country : '',
+      firstName: credentials.firstName ? credentials.firstName : '',
+      lastName: credentials.lastName ? credentials.lastName : '',
+      mobile: credentials.mobile ? credentials.mobile : '',
+    });
+  };
   render() {
     const { classes } = this.props;
     const { errors } = this.state;
@@ -144,7 +163,6 @@ class AddAuction extends Component {
               name="buyNowAmount"
               label="Buy Now Price"
               type="number"
-              pattern="[0-9]+(\\.[0-9][0-9]?)?"
               fullWidth
               onChange={this.handleChange}
               value={this.state.buyNowAmount}
@@ -167,7 +185,7 @@ class AddAuction extends Component {
               Cancel
             </Button>
             <Button onClick={this.handleSubmit} color="primary">
-              Add Auction
+              Update
             </Button>
           </DialogActions>
         </Dialog>
@@ -176,13 +194,13 @@ class AddAuction extends Component {
   }
 }
 const mapStateToProps = (state) => ({
-  credentials: state.user.credentials,
+  userAuctions: state.userAuctions,
   UI: state.UI,
 });
-AddAuction.propTypes = {
+EditAuction.propTypes = {
   addNewAuction: PropTypes.func.isRequired,
   classes: PropTypes.object.isRequired,
 };
 export default connect(mapStateToProps, { addNewAuction })(
-  withStyles(style)(AddAuction)
+  withStyles(style)(EditAuction)
 );

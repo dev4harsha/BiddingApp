@@ -1,5 +1,6 @@
 const { doc } = require('prettier');
 const { db, admin } = require('../util/admin');
+const { validateAddAuction } = require('../util/validators');
 
 exports.getAllAuctions = (req, res) => {
   db.collection('auctions')
@@ -45,6 +46,7 @@ exports.getAuthUserAllAuctions = (req, res) => {
           active: doc.data().active,
           approval: doc.data().approval,
           bids: doc.data().bids,
+          buyNowAmount: doc.data().buyNowAmount,
         });
       });
       return res.json(auctions);
@@ -57,18 +59,24 @@ exports.postOneAuction = (req, res) => {
     auctionType: req.body.auctionType,
     itemDescription: req.body.itemDescription,
     initAmount: req.body.initAmount,
+    buyNowAmount: req.body.buyNowAmount,
     createdAt: new Date(),
-    endDateTime: admin.firestore.Timestamp.fromDate(new Date()), //req.body.endDateTime, //admin.firestore.Timestamp.fromDate(new Date()),
+    endDateTime: new Date(req.body.endDateTime), //admin.firestore.Timestamp.fromDate(new Date()),
     userId: req.user.uid,
     approval: false,
     active: false,
     maxBid: 0,
     bids: 0,
   };
+  const { valid, errors } = validateAddAuction(newAuction);
+  if (!valid) return res.status(400).json(errors);
+
   db.collection('auctions')
     .add(newAuction)
     .then((doc) => {
-      res.json({ message: `Document ${doc.id} created successfully ` });
+      res.json({
+        message: `Auction added successfully `,
+      });
     })
     .catch((err) => {
       res.status(500).json({ error: 'somthing went wrong' });
@@ -132,6 +140,7 @@ exports.getAuction = (req, res) => {
           auctionId: doc.data().auctionId,
           userName: doc.data().userName,
           userId: doc.data().userId,
+          buyNowAmount: doc.data().buyNowAmount,
           bidId: doc.id,
         });
       });

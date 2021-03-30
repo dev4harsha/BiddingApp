@@ -20,6 +20,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import UserAuth from './pages/UserAuth';
 
 import AuthRoute from './AuthRoute';
+
 //theme
 
 //Redux

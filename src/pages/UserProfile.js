@@ -5,7 +5,7 @@ import { Container, Grid } from '@material-ui/core';
 import { TabPanel, TabContext } from '@material-ui/lab';
 import ProfileDetails from '../components/userProfile/ProfileDetails';
 import UserHistory from '../components/userProfile/UserHistory';
-import ViewAuction from '../components/userProfile/ViewAuction';
+import ViewAuction from '../components/userProfile/viewAuction/ViewAuction';
 import ListSubheader from '@material-ui/core/ListSubheader';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
@@ -27,6 +27,7 @@ import store from '../redux/store';
 import { SET_USER_MENU_INDEX } from '../redux/types';
 import { connect } from 'react-redux';
 import EditDetails from '../components/userProfile/EditDetails';
+import SnackBar from '../components/SnackBar';
 const styles = (theme) => ({
   ...theme.spreadThis,
   container: {
@@ -85,7 +86,10 @@ class UserProfile extends Component {
   };
 
   render() {
-    const { classes } = this.props;
+    const {
+      classes,
+      UI: { message, errors },
+    } = this.props;
     const { openHistory, openAuction, openProfile } = this.state;
     let selectedIndex = this.props.userMenuIndex;
     let selectedMenuView;
@@ -228,11 +232,16 @@ class UserProfile extends Component {
             </Grid>
           </Grid>
         </Container>
+        {message && (
+          <SnackBar message={message.message} type="success" open={true} />
+        )}
+        {errors && <SnackBar message={errors.error} type="error" open={true} />}
       </>
     );
   }
 }
 const mapStateToProps = (state) => ({
   userMenuIndex: state.UI.userMenuIndex,
+  UI: state.UI,
 });
 export default connect(mapStateToProps, {})(withStyles(styles)(UserProfile));

@@ -5,6 +5,8 @@ import {
   SET_BID,
   CLEAR_AUCTION,
   SET_USER_AUCTIONS,
+  CHANGE_AUCTION_STATE,
+  DELETE_USER_AUCTION,
 } from '../types';
 
 const initialState = {
@@ -45,7 +47,19 @@ export default function (state = initialState, action) {
         userAuctions: action.payload,
         loading: false,
       };
+    case CHANGE_AUCTION_STATE:
+      state.userAuctions[action.payload].active = !state.userAuctions[
+        action.payload
+      ].active;
 
+      return {
+        ...state,
+      };
+    case DELETE_USER_AUCTION:
+      state.userAuctions.splice(action.payload, 1);
+      return {
+        ...state,
+      };
     default:
       return state;
   }
