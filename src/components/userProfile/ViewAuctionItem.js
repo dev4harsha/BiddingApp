@@ -8,12 +8,14 @@ import {
   TextField,
   Paper,
   withStyles,
+  Button,
 } from '@material-ui/core';
 import {
   getUserAuctions,
-  auctionStatusChange,
+  endAuction,
   deleteUserAuction,
-} from '../../../redux/actions/auctionActions';
+  makePayment,
+} from '../../redux/actions/auctionActions';
 import { Edit, Delete } from '@material-ui/icons';
 import DeleteIcon from '@material-ui/icons/Delete';
 import EditIcon from '@material-ui/icons/Edit';
@@ -21,8 +23,11 @@ import VisibilityIcon from '@material-ui/icons/Visibility';
 import VisibilityOffIcon from '@material-ui/icons/VisibilityOff';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import AddEditAuction from '../AddEditAuction';
-
+import AddEditAuction from './AddEditAuction';
+import EventBusyIcon from '@material-ui/icons/EventBusy';
+import { approvalStatus } from '../../constant';
+import { USER_END_AUCTION } from '../../redux/types';
+import { paymentStatus } from '../../constant';
 const styles = (theme) => ({
   gridContainer: {
     textAlign: 'center',
@@ -42,15 +47,12 @@ class ViewAuctionItem extends Component {
   state = {
     openEditDialog: false,
   };
-  handleAuctionStatusChange = () => {
-    this.props.auctionStatusChange(
-      this.props.userAucton.auctionId,
-      this.props.index
-    );
+  handleEndAuction = () => {
+    this.props.endAuction(this.props.userAuction.auctionId, this.props.index);
   };
   handleDeleteUserAuction = () => {
     this.props.deleteUserAuction(
-      this.props.userAucton.auctionId,
+      this.props.userAuction.auctionId,
       this.props.index
     );
   };
@@ -60,17 +62,29 @@ class ViewAuctionItem extends Component {
   handleCloseEditDialog = () => {
     this.setState({ openEditDialog: false });
   };
+  handleMakePayment = () => {
+    this.props.makePayment(this.props.userAuction.auctionId, this.props.index);
+  };
   render() {
     const { classes } = this.props;
-    const { userAucton } = this.props;
+    const { userAuction, user } = this.props;
     let editDialogMarkUp = this.state.openEditDialog ? (
       <AddEditAuction
         edit={true}
         reduxIndex={this.props.index}
-        userAucton={userAucton}
+        userAuction={userAuction}
         close={this.handleCloseEditDialog}
       />
     ) : null;
+    let paymentMarkUp = (
+      <Grid item>
+        <Typography variant="body2">Payment Status</Typography>
+
+        <Typography variant="h6">
+          {paymentStatus[userAuction.payment]}
+        </Typography>
+      </Grid>
+    );
 
     return (
       <>
@@ -90,67 +104,66 @@ class ViewAuctionItem extends Component {
           >
             <Grid item>
               <Typography variant="body2">Auction Name</Typography>
-              {userAucton.auctionName && (
-                <Typography variant="h6">{userAucton.auctionName}</Typography>
+              {userAuction.auctionName && (
+                <Typography variant="h6">{userAuction.auctionName}</Typography>
               )}
             </Grid>
             <Grid item>
               <Typography variant="body2">Auction Type</Typography>
-              {userAucton.auctionType && (
-                <Typography variant="h6">{userAucton.auctionType}</Typography>
+              {userAuction.auctionType && (
+                <Typography variant="h6">{userAuction.auctionType}</Typography>
               )}
             </Grid>
             <Grid item>
               <Typography variant="body2">Description</Typography>
-              {userAucton.itemDescription && (
+              {userAuction.itemDescription && (
                 <Typography variant="h6">
-                  {userAucton.itemDescription}
+                  {userAuction.itemDescription}
                 </Typography>
               )}
             </Grid>
             <Grid item>
               <Typography variant="body2">Created at</Typography>
-              {userAucton.createdAt && (
+              {userAuction.createdAt && (
                 <Typography variant="h6">
                   {moment
-                    .unix(userAucton.createdAt._seconds)
+                    .unix(userAuction.createdAt._seconds)
                     .format('MM/DD/YYYY h:mm A')}
                 </Typography>
               )}
             </Grid>
             <Grid item>
               <Typography variant="body2">End Date</Typography>
-              {userAucton.endDateTime && (
+              {userAuction.endDateTime && (
                 <Typography variant="h6">
                   {moment
-                    .unix(userAucton.endDateTime._seconds)
+                    .unix(userAuction.endDateTime._seconds)
                     .format('MM/DD/YYYY h:mm A')}
                 </Typography>
               )}
             </Grid>
-
             <Grid item>
               <Typography variant="body2">Base Price</Typography>
-              {userAucton.initAmount && (
-                <Typography variant="h6">{userAucton.initAmount}</Typography>
+              {userAuction.initAmount && (
+                <Typography variant="h6">{userAuction.initAmount}</Typography>
               )}
             </Grid>
             <Grid item>
               <Typography variant="body2">Buy Now Price</Typography>
-              {userAucton.buyNowAmount && (
-                <Typography variant="h6">{userAucton.buyNowAmount}</Typography>
+              {userAuction.buyNowAmount && (
+                <Typography variant="h6">{userAuction.buyNowAmount}</Typography>
               )}
             </Grid>
             <Grid item>
               <Typography variant="body2">Heighest Bid</Typography>
-              {userAucton.maxBid && (
-                <Typography variant="h6">{userAucton.maxBid}</Typography>
+              {userAuction.maxBid && (
+                <Typography variant="h6">{userAuction.maxBid}</Typography>
               )}
             </Grid>
             <Grid item>
               <Typography variant="body2">No of Bids</Typography>
-              {userAucton.bids && (
-                <Typography variant="h6">{userAucton.bids}</Typography>
+              {userAuction.bids && (
+                <Typography variant="h6">{userAuction.bids}</Typography>
               )}
             </Grid>
 
@@ -158,20 +171,15 @@ class ViewAuctionItem extends Component {
               <Typography variant="body2">Approval</Typography>
 
               <Typography variant="h6">
-                {userAucton.approval ? 'Approved' : 'Not Approved'}
+                {approvalStatus[userAuction.approval]}
               </Typography>
             </Grid>
             <Grid item>
-              <Typography variant="body2">Status</Typography>
-              <>
-                <IconButton onClick={this.handleAuctionStatusChange}>
-                  {userAucton.active ? (
-                    <VisibilityIcon color="primary" />
-                  ) : (
-                    <VisibilityOffIcon color="secondary" />
-                  )}
-                </IconButton>
-              </>
+              <Typography variant="body2">End Auction</Typography>
+
+              <IconButton onClick={this.handleEndAuction}>
+                <EventBusyIcon color="primary" />
+              </IconButton>
             </Grid>
             <Grid item>
               <Typography variant="body2">Remove</Typography>
@@ -182,11 +190,21 @@ class ViewAuctionItem extends Component {
                 <DeleteIcon />
               </IconButton>
             </Grid>
+
             <Grid item>
               <Typography variant="body2">Edit</Typography>
               <IconButton color="secondary" onClick={this.handleOpenEditDialog}>
                 <EditIcon />
               </IconButton>
+            </Grid>
+            <Grid item>
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={this.handleMakePayment}
+              >
+                Make Payment
+              </Button>
             </Grid>
           </Grid>
         </Paper>
@@ -200,11 +218,13 @@ ViewAuctionItem.propType = {
 };
 const mapStateProps = (state) => ({
   auction: state.auction,
+  user: state.user,
 });
 
 const mapActionsToProps = {
-  auctionStatusChange,
+  endAuction,
   deleteUserAuction,
+  makePayment,
 };
 export default connect(
   mapStateProps,

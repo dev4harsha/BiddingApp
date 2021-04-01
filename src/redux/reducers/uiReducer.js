@@ -11,7 +11,7 @@ const initialState = {
   loading: false,
   errors: null,
   messages: null,
-  userMenuIndex: 1,
+  userMenuIndex: 0,
 };
 
 export default function (state = initialState, action) {

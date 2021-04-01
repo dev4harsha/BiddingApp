@@ -8,7 +8,7 @@ import {
   LOADING_UI,
   SET_MESSAGES,
   SET_USER_AUCTIONS,
-  CHANGE_AUCTION_STATE,
+  USER_END_AUCTION,
   DELETE_USER_AUCTION,
   UPDATE_USER_AUCTION,
 } from '../types';
@@ -29,12 +29,12 @@ export const addNewAuction = (newAuctionDetails) => (dispatch) => {
       dispatch({ type: SET_ERRORS, payload: err.response.data });
     });
 };
-export const auctionStatusChange = (auctionId, index) => (dispatch) => {
+export const endAuction = (auctionId, index) => (dispatch) => {
   axios
-    .get(`/auction/${auctionId}/activeDeactive`)
+    .get(`/auction/${auctionId}/endAuction`)
     .then((res) => {
-      dispatch({ type: CHANGE_AUCTION_STATE, payload: index });
-      dispatch({ type: SET_MESSAGES, payload: res.data.message });
+      dispatch({ type: DELETE_USER_AUCTION, payload: index });
+      dispatch({ type: SET_MESSAGES, payload: res.data });
     })
     .catch((err) => {
       console.log(err);
@@ -71,6 +71,18 @@ export const deleteUserAuction = (auctionId, index) => (dispatch) => {
     });
 };
 
+export const makePayment = (auctionId, index) => (dispatch) => {
+  axios
+    .get(`/auction/${auctionId}/makePayment`)
+    .then((res) => {
+      dispatch({ type: DELETE_USER_AUCTION, payload: index });
+      dispatch({ type: SET_MESSAGES, payload: res.data });
+    })
+    .catch((err) => {
+      console.log(err);
+      dispatch({ type: SET_ERRORS, payload: err.response.data });
+    });
+};
 export const postBid = (bidAmount, auctionId) => (dispatch) => {
   dispatch({ type: LOADING_UI });
 
@@ -90,6 +102,40 @@ export const getUserAuctions = () => (dispatch) => {
   dispatch({ type: LOADING_AUCTIONS });
   axios
     .get('/userAuctions')
+    .then((res) => {
+      dispatch({ type: SET_USER_AUCTIONS, payload: res.data });
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+};
+
+export const getUserBidAuctions = () => (dispatch) => {
+  dispatch({ type: LOADING_AUCTIONS });
+  axios
+    .get('/bidAuctions')
+    .then((res) => {
+      dispatch({ type: SET_USER_AUCTIONS, payload: res.data });
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+};
+export const getUserAuctionsBuy = () => (dispatch) => {
+  dispatch({ type: LOADING_AUCTIONS });
+  axios
+    .get('/auctionsBuy')
+    .then((res) => {
+      dispatch({ type: SET_USER_AUCTIONS, payload: res.data });
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+};
+export const getUserAuctionsSell = () => (dispatch) => {
+  dispatch({ type: LOADING_AUCTIONS });
+  axios
+    .get('/auctionsSell')
     .then((res) => {
       dispatch({ type: SET_USER_AUCTIONS, payload: res.data });
     })

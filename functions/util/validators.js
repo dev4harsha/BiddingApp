@@ -61,7 +61,7 @@ exports.validateAddAuction = (newAuction) => {
     errors.initAmount = 'Must not be empty';
   } else if (
     isNaN(parseFloat(newAuction.initAmount)) ||
-    parseFloat(newAuction.initAmount) < 0
+    parseFloat(newAuction.initAmount) == 0
   ) {
     errors.initAmount = 'Invalid amount';
   }
@@ -70,9 +70,13 @@ exports.validateAddAuction = (newAuction) => {
     errors.buyNowAmount = 'Must not be empty';
   } else if (
     isNaN(parseFloat(newAuction.buyNowAmount)) ||
-    parseFloat(newAuction.buyNowAmount) < 0.01
+    parseFloat(newAuction.buyNowAmount) == 0
   ) {
     errors.buyNowAmount = 'Invalid amount';
+  } else if (
+    parseFloat(newAuction.initAmount) >= parseFloat(newAuction.buyNowAmount)
+  ) {
+    errors.buyNowAmount = 'Need to be higher than base price';
   }
   if (new Date(newAuction.endDateTime) < new Date()) {
     errors.endDateTime = 'Invalid Date';

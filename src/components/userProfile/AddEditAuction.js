@@ -67,7 +67,7 @@ class AddEditAuction extends Component {
       itemDescription: this.state.itemDescription,
       buyNowAmount: this.state.buyNowAmount,
     };
-    console.log(this.state.endDateTime);
+
     this.props.addNewAuction(newAuctionDetails);
   };
   componentWillReceiveProps(nextProps) {
@@ -80,18 +80,18 @@ class AddEditAuction extends Component {
     }
   }
   componentDidMount() {
-    if (this.props.userAucton) {
+    if (this.props.userAuction) {
       this.setState({
-        auctionName: this.props.userAucton.auctionName,
-        auctionType: this.props.userAucton.auctionType,
+        auctionName: this.props.userAuction.auctionName,
+        auctionType: this.props.userAuction.auctionType,
         endDateTime: moment(
           new Date(
-            this.props.userAucton.endDateTime._seconds * 1000
+            this.props.userAuction.endDateTime._seconds * 1000
           ).toISOString()
         ),
-        initAmount: this.props.userAucton.initAmount,
-        itemDescription: this.props.userAucton.itemDescription,
-        buyNowAmount: this.props.userAucton.buyNowAmount,
+        initAmount: this.props.userAuction.initAmount,
+        itemDescription: this.props.userAuction.itemDescription,
+        buyNowAmount: this.props.userAuction.buyNowAmount,
       });
     }
   }
@@ -103,7 +103,7 @@ class AddEditAuction extends Component {
       initAmount: this.state.initAmount,
       itemDescription: this.state.itemDescription,
       buyNowAmount: this.state.buyNowAmount,
-      auctionId: this.props.userAucton.auctionId,
+      auctionId: this.props.userAuction.auctionId,
     };
     this.props.updateAuctionDetails(
       updateAuctionDetails,

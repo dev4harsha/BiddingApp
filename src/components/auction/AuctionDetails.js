@@ -96,12 +96,16 @@ class AuctionDetails extends Component {
       this.props.history.push('/UserAuth', { from: this.props.location });
     }
   };
-
-  componentWillReceiveProps(nextProps) {
-    if (this.state.maxBid === 0 && nextProps.auction.auction.maxBid)
+  componentDidMount() {
+    if (this.props.auction.auction.bids > 0) {
       this.setState({
-        maxBid: parseFloat(nextProps.auction.auction.maxBid).toFixed(2),
+        maxBid: parseFloat(this.props.auction.auction.maxBid).toFixed(2),
       });
+    } else {
+      this.setState({
+        maxBid: parseFloat(this.props.auction.auction.initAmount).toFixed(2),
+      });
+    }
   }
 
   render() {

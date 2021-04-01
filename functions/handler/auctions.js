@@ -6,8 +6,8 @@ exports.getAllAuctions = (req, res) => {
   db.collection('auctions')
     .orderBy('createdAt', 'desc')
     .limit(Number(req.params.limitAuctions))
-    .where('active', '==', true)
-    .where('approval', '==', true)
+    .where('approval', '==', 1)
+    .where('sold', '==', 0)
     .get()
     .then((data) => {
       let auctions = [];
@@ -26,32 +26,55 @@ exports.getAllAuctions = (req, res) => {
     .catch((err) => console.error(err));
 };
 
-exports.getAuthUserAllAuctions = (req, res) => {
+exports.userAuctionsSell = (req, res) => {
   db.collection('auctions')
     .orderBy('createdAt', 'desc')
     .where('userId', '==', req.user.uid)
+    .where('sold', '==', 2)
     .get()
     .then((data) => {
-      let auctions = [];
-      data.forEach((doc) => {
-        auctions.push({
-          auctionId: doc.id,
-          auctionName: doc.data().auctionName,
-          initAmount: doc.data().initAmount,
-          endDateTime: doc.data().endDateTime,
-          auctionType: doc.data().auctionType,
-          createdAt: doc.data().createdAt,
-          itemDescription: doc.data().itemDescription,
-          maxBid: doc.data().maxBid,
-          active: doc.data().active,
-          approval: doc.data().approval,
-          bids: doc.data().bids,
-          buyNowAmount: doc.data().buyNowAmount,
-        });
-      });
+      let auctions = auctionFetch(data);
       return res.json(auctions);
     })
     .catch((err) => console.error(err));
+};
+exports.userAuctionsBuy = (req, res) => {
+  db.collection('auctions')
+    .orderBy('createdAt', 'desc')
+    .where('maxBidUserId', '==', req.user.uid)
+    .where('sold', '==', 2)
+    .get()
+    .then((data) => {
+      let auctions = auctionFetch(data);
+      return res.json(auctions);
+    })
+    .catch((err) => console.error(err));
+};
+
+exports.getAuthUserAllAuctions = (req, res) => {
+  db.collection('auctions')
+    .where('userId', '==', req.user.uid)
+    .where('sold', '!=', 2)
+    .get()
+    .then((data) => {
+      let auctions = auctionFetch(data);
+      return res.json(auctions);
+    })
+    .catch((err) => console.error(err));
+};
+exports.bidAuctions = (req, res) => {
+  db.collection('auctions')
+    .where('sold', '!=', 2)
+    .where('participents', 'array-contains', req.user.uid)
+    .get()
+    .then((data) => {
+      let auctions = auctionFetch(data);
+      return res.json(auctions);
+    })
+    .catch((err) => {
+      console.error(err);
+      return res.status(500).json({ error: err.code });
+    });
 };
 exports.postOneAuction = (req, res) => {
   const newAuction = {
@@ -63,9 +86,13 @@ exports.postOneAuction = (req, res) => {
     createdAt: new Date(),
     endDateTime: new Date(req.body.endDateTime), //admin.firestore.Timestamp.fromDate(new Date()),
     userId: req.user.uid,
-    approval: false,
-    active: false,
+    approval: 0,
+    payment: 0,
+    sold: 0,
     maxBid: 0,
+    maxBidUserId: '',
+    maxBidId: '',
+    participents: [],
     bids: 0,
   };
   const { valid, errors } = validateAddAuction(newAuction);
@@ -101,6 +128,11 @@ exports.updateAuction = (req, res) => {
     if (!doc.exists) {
       return res.status(400).json({ error: 'Auction not found!' });
     }
+    if (doc.data().approval != 0) {
+      return res
+        .status(400)
+        .json({ error: 'Can not edit Auction, available for public!' });
+    }
     const { valid, errors } = validateAddAuction(auctionDetails);
     if (!valid) return res.status(400).json(errors);
     auction
@@ -109,7 +141,6 @@ exports.updateAuction = (req, res) => {
         auctionDetails.auctionId = req.body.auctionId;
         auctionDetails.createdAt = beforeSnap.createdAt;
         auctionDetails.maxBid = beforeSnap.maxBid;
-        auctionDetails.active = beforeSnap.active;
         auctionDetails.approval = beforeSnap.approval;
         auctionDetails.bids = beforeSnap.bids;
         return res.json({
@@ -127,7 +158,7 @@ exports.updateAuction = (req, res) => {
       });
   });
 };
-exports.activeDeactiveAuction = (req, res) => {
+exports.endAuction = (req, res) => {
   let status;
 
   db.doc(`/auctions/${req.params.auctionId}`)
@@ -135,6 +166,12 @@ exports.activeDeactiveAuction = (req, res) => {
     .then((doc) => {
       if (!doc.exists) {
         return res.status(400).json({ error: 'Auction not found!' });
+      }
+      if (doc.data().bids === 0) {
+        return res.status(400).json({
+          error:
+            'can not end auction since bids not available. if you want to remove the auction from the list, please detele.',
+        });
       }
 
       if (doc.data().userId !== req.user.uid) {
@@ -144,10 +181,37 @@ exports.activeDeactiveAuction = (req, res) => {
           } auction status`,
         });
       } else {
-        status = !doc.data().active;
-        return doc.ref.update({ active: status }).then(() => {
+        return doc.ref.update({ sold: 1, payment: 1 }).then(() => {
           return res.json({
-            message: `Auction ${status ? 'Ativated' : 'Deactivated'}`,
+            message: 'Auction ended!, Current Max bid won the auction!',
+          });
+        });
+      }
+    })
+    .catch((err) => {
+      console.error(err);
+      res.status(500).json({ error: err.code });
+    });
+};
+
+exports.makePayment = (req, res) => {
+  let status;
+
+  db.doc(`/auctions/${req.params.auctionId}`)
+    .get()
+    .then((doc) => {
+      if (!doc.exists) {
+        return res.status(400).json({ error: 'Auction not found!' });
+      }
+
+      if (doc.data().maxBidUserId !== req.user.uid) {
+        return res.status(400).json({
+          error: `Auction has been reseved for someone else`,
+        });
+      } else {
+        return doc.ref.update({ sold: 2, payment: 2 }).then(() => {
+          return res.json({
+            message: 'Payment has been succesful!',
           });
         });
       }
@@ -159,7 +223,9 @@ exports.activeDeactiveAuction = (req, res) => {
 };
 exports.getAuction = (req, res) => {
   let auctionData = {};
-  db.doc(`/auctions/${req.params.auctionId}`)
+  let auctionDoc = db.doc(`/auctions/${req.params.auctionId}`);
+
+  auctionDoc
     .get()
     .then((doc) => {
       if (!doc.exists) {
@@ -167,32 +233,30 @@ exports.getAuction = (req, res) => {
       }
       auctionData = doc.data();
       auctionData.auctionId = doc.id;
-      return db
+      auctionDoc
         .collection('bids')
-        .orderBy('createdAt', 'desc')
-        .where('auctionId', '==', req.params.auctionId)
-        .limit(5)
-        .get();
-    })
-    .then((data) => {
-      auctionData.bidsData = [];
-      data.forEach((doc) => {
-        auctionData.bidsData.push({
-          imageUrl: doc.data().imageUrl,
-          bidAmount: doc.data().bidAmount,
-          createdAt: doc.data().createdAt,
-          auctionId: doc.data().auctionId,
-          userName: doc.data().userName,
-          userId: doc.data().userId,
-          buyNowAmount: doc.data().buyNowAmount,
-          bidId: doc.id,
+        .get()
+        .then((data) => {
+          auctionData.bidsData = [];
+          data.forEach((doc) => {
+            auctionData.bidsData.push({
+              imageUrl: doc.data().imageUrl,
+              bidAmount: doc.data().bidAmount,
+              createdAt: doc.data().createdAt,
+              auctionId: doc.data().auctionId,
+              userName: doc.data().userName,
+              userId: doc.data().userId,
+              buyNowAmount: doc.data().buyNowAmount,
+              bidId: doc.id,
+            });
+          });
+          return res.json(auctionData);
         });
-      });
-      return res.json(auctionData);
     })
+
     .catch((err) => {
       console.error(err);
-      res.status(500).json({ error: err.code });
+      res.status(500).json({ error: err });
     });
 };
 
@@ -200,15 +264,14 @@ exports.bidOnAuction = (req, res) => {
   const newBid = {
     createdAt: new Date(),
     bidAmount: req.body.bidAmount,
-    auctionId: req.params.auctionId,
     userId: req.user.uid,
     userName: req.user.email,
     imageUrl: req.user.imageUrl,
   };
 
-  const domainDocument = db.doc(`/auctions/${req.params.auctionId}`);
+  const auctionDocument = db.doc(`/auctions/${req.params.auctionId}`);
   let auctionData;
-  domainDocument
+  auctionDocument
     .get()
     .then((doc) => {
       if (!doc.exists) {
@@ -216,10 +279,10 @@ exports.bidOnAuction = (req, res) => {
       } else {
         auctionData = doc.data();
       }
-      if (!doc.data().active) {
+      if (doc.data().userId === req.user.uid) {
         return res
           .status(404)
-          .json({ error: 'Not allowed to bid, Auction not active!' });
+          .json({ error: 'You are not allowed to bid on your auction!' });
       }
       if (!doc.data().approval) {
         return res
@@ -234,15 +297,24 @@ exports.bidOnAuction = (req, res) => {
           .status(404)
           .json({ error: 'Bid amount is low, increase bid amount!' });
       }
-      return db
+      return auctionDocument
         .collection('bids')
         .add(newBid)
         .then((data) => {
           //auctionData.bids++;
+          let participentArr = doc.data().participents;
+
+          // console.log(doc.data().participents.arrayUnion(req.user.uid));
+          participentArr.includes(req.user.uid)
+            ? participentArr
+            : participentArr.push(req.user.uid);
+
           doc.ref.update({
             bids: doc.data().bids + 1,
             maxBidId: data.id,
             maxBid: req.body.bidAmount,
+            maxBidUserId: req.user.uid,
+            participents: participentArr,
           });
           newBid.bidId = data.id;
         })
@@ -281,4 +353,28 @@ exports.deleteAuction = (req, res) => {
       console.error(err);
       return res.status(500).json({ error: err.code });
     });
+};
+
+const auctionFetch = (data) => {
+  let auctions = [];
+  data.forEach((doc) => {
+    auctions.push({
+      auctionId: doc.id,
+      auctionName: doc.data().auctionName,
+      initAmount: doc.data().initAmount,
+      endDateTime: doc.data().endDateTime,
+      auctionType: doc.data().auctionType,
+      createdAt: doc.data().createdAt,
+      itemDescription: doc.data().itemDescription,
+      maxBid: doc.data().maxBid,
+      active: doc.data().active,
+      approval: doc.data().approval,
+      bids: doc.data().bids,
+      sold: doc.data().sold,
+      buyNowAmount: doc.data().buyNowAmount,
+      payment: doc.data().payment,
+      maxBidUserId: doc.data().maxBidUserId,
+    });
+  });
+  return auctions;
 };

@@ -4,8 +4,8 @@ import { withStyles } from '@material-ui/core/styles';
 import { Container, Grid } from '@material-ui/core';
 import { TabPanel, TabContext } from '@material-ui/lab';
 import ProfileDetails from '../components/userProfile/ProfileDetails';
-import UserHistory from '../components/userProfile/UserHistory';
-import ViewAuction from '../components/userProfile/viewAuction/ViewAuction';
+
+import ViewAuction from '../components/userProfile/ViewAuction';
 import ListSubheader from '@material-ui/core/ListSubheader';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
@@ -94,36 +94,36 @@ class UserProfile extends Component {
     let selectedIndex = this.props.userMenuIndex;
     let selectedMenuView;
     switch (selectedIndex) {
+      case 0:
+        selectedMenuView = <ViewAuction componentType="bidAuctions" />;
+        break;
       case 1:
-      case 10:
-        selectedIndex === 10
-          ? (selectedMenuView = (
-              <>
-                <ViewAuction />
-                <AddEditAuction />
-              </>
-            ))
-          : (selectedMenuView = <ViewAuction />);
 
+      case 10:
+        selectedMenuView = <ViewAuction componentType="auctions" />;
+        if (selectedIndex === 10)
+          selectedMenuView = (
+            <>
+              {selectedMenuView} <AddEditAuction />
+            </>
+          );
         break;
 
-      case 2:
-        selectedMenuView = <UserHistory />;
+      case 20:
+        selectedMenuView = <ViewAuction componentType="sell" />;
+        break;
+      case 21:
+        selectedMenuView = <ViewAuction componentType="buy" />;
         break;
       case 3:
       case 30:
-        selectedIndex === 30
-          ? (selectedMenuView = (
-              <>
-                <ProfileDetails />
-                <EditDetails />
-              </>
-            ))
-          : (selectedMenuView = (
-              <>
-                <ProfileDetails />
-              </>
-            ));
+        selectedMenuView = <ProfileDetails />;
+        if (selectedIndex === 30)
+          selectedMenuView = (
+            <>
+              {selectedMenuView} <EditDetails />
+            </>
+          );
 
         break;
 
@@ -137,6 +137,16 @@ class UserProfile extends Component {
             <Grid className={classes.subGrid} item sm={4} md={3} lg={3}>
               <List component="nav" className={classes.root}>
                 <ListItem
+                  selected={selectedIndex === 0}
+                  button
+                  onClick={(event) => this.handleListItemClick(event, 0)}
+                >
+                  <ListItemIcon>
+                    <DnsIcon />
+                  </ListItemIcon>
+                  <ListItemText primary="Bid Auctions" />
+                </ListItem>
+                <ListItem
                   selected={selectedIndex === 1}
                   button
                   onClick={(event) => this.handleListItemClick(event, 1)}
@@ -144,7 +154,7 @@ class UserProfile extends Component {
                   <ListItemIcon>
                     <DnsIcon />
                   </ListItemIcon>
-                  <ListItemText primary="Auctions" />
+                  <ListItemText primary="My Auctions" />
                   {openAuction ? <ExpandLess /> : <ExpandMore />}
                 </ListItem>
                 <Collapse in={openAuction} timeout="auto" unmountOnExit>

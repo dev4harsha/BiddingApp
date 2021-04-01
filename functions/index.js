@@ -18,9 +18,14 @@ const {
   getAuction,
   bidOnAuction,
   getAuthUserAllAuctions,
-  activeDeactiveAuction,
+  endAuction,
   deleteAuction,
   updateAuction,
+  userAuctionsHistory,
+  makePayment,
+  userAuctionsSell,
+  userAuctionsBuy,
+  bidAuctions,
 } = require('./handler/auctions');
 const {
   signup,
@@ -36,12 +41,16 @@ app.get('/auctions/:limitAuctions', getAllAuctions); //done
 app.get('/auction/:auctionId', getAuction); //done
 
 //auth user auctions
+app.get('/bidAuctions', FBAuth, bidAuctions);
 app.get('/userAuctions', FBAuth, getAuthUserAllAuctions); //done
 app.post('/auction', FBAuth, postOneAuction); //done
 app.post('/auction/:auctionId/bid', FBAuth, bidOnAuction);
 app.post('/auction/update', FBAuth, updateAuction);
-app.get('/auction/:auctionId/activeDeactive', FBAuth, activeDeactiveAuction); //done
+app.get('/auction/:auctionId/endAuction', FBAuth, endAuction); //done
 app.get('/auction/:auctionId/delete', FBAuth, deleteAuction); //done
+app.get('/auctionsSell', FBAuth, userAuctionsSell);
+app.get('/auctionsBuy', FBAuth, userAuctionsBuy);
+app.get('/auction/:auctionId/makePayment', FBAuth, makePayment);
 
 //blogPost
 app.post('/blogPost', FBAuth, postOneBlog);
