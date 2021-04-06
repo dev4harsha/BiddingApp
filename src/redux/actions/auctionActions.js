@@ -11,6 +11,8 @@ import {
   USER_END_AUCTION,
   DELETE_USER_AUCTION,
   UPDATE_USER_AUCTION,
+  USER_AUCTION_RESERVED,
+  BUYER_PAYMENT_AUCTION,
 } from '../types';
 import axios from 'axios';
 
@@ -33,7 +35,7 @@ export const endAuction = (auctionId, index) => (dispatch) => {
   axios
     .get(`/auction/${auctionId}/endAuction`)
     .then((res) => {
-      dispatch({ type: DELETE_USER_AUCTION, payload: index });
+      dispatch({ type: USER_AUCTION_RESERVED, payload: index });
       dispatch({ type: SET_MESSAGES, payload: res.data });
     })
     .catch((err) => {
@@ -75,7 +77,7 @@ export const makePayment = (auctionId, index) => (dispatch) => {
   axios
     .get(`/auction/${auctionId}/makePayment`)
     .then((res) => {
-      dispatch({ type: DELETE_USER_AUCTION, payload: index });
+      dispatch({ type: BUYER_PAYMENT_AUCTION, payload: index });
       dispatch({ type: SET_MESSAGES, payload: res.data });
     })
     .catch((err) => {

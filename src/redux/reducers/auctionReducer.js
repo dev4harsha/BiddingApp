@@ -7,6 +7,8 @@ import {
   SET_USER_AUCTIONS,
   DELETE_USER_AUCTION,
   UPDATE_USER_AUCTION,
+  USER_AUCTION_RESERVED,
+  BUYER_PAYMENT_AUCTION,
 } from '../types';
 
 const initialState = {
@@ -58,7 +60,19 @@ export default function (state = initialState, action) {
       return {
         ...state,
       };
+    case USER_AUCTION_RESERVED:
+      state.userAuctions[action.payload].payment = 1;
+      state.userAuctions[action.payload].sold = 1;
 
+      return {
+        ...state,
+      };
+    case BUYER_PAYMENT_AUCTION:
+      state.userAuctions[action.payload].payment = 2;
+
+      return {
+        ...state,
+      };
     default:
       return state;
   }

@@ -11,7 +11,6 @@ const initialState = {
   loading: false,
   errors: null,
   messages: null,
-  userMenuIndex: 0,
 };
 
 export default function (state = initialState, action) {
@@ -45,11 +44,7 @@ export default function (state = initialState, action) {
         loading: false,
         messages: null,
       };
-    case SET_USER_MENU_INDEX:
-      return {
-        ...state,
-        userMenuIndex: action.payload,
-      };
+
     default:
       return state;
   }

@@ -88,8 +88,11 @@ exports.postOneAuction = (req, res) => {
     userId: req.user.uid,
     approval: 0,
     payment: 0,
+
+    delivery: 0,
+    orderConfirmation: 0,
     sold: 0,
-    maxBid: 0,
+    maxBid: '0',
     maxBidUserId: '',
     maxBidId: '',
     participents: [],
@@ -167,6 +170,11 @@ exports.endAuction = (req, res) => {
       if (!doc.exists) {
         return res.status(400).json({ error: 'Auction not found!' });
       }
+      if (doc.data().sold === 1) {
+        return res.status(400).json({
+          error: 'Auction has been ended!',
+        });
+      }
       if (doc.data().bids === 0) {
         return res.status(400).json({
           error:
@@ -208,13 +216,22 @@ exports.makePayment = (req, res) => {
         return res.status(400).json({
           error: `Auction has been reseved for someone else`,
         });
-      } else {
-        return doc.ref.update({ sold: 2, payment: 2 }).then(() => {
-          return res.json({
-            message: 'Payment has been succesful!',
-          });
+      }
+      if (doc.data().maxBidUserId == req.user.uid && doc.data().sold !== 1) {
+        return res.status(400).json({
+          error: `Can not make payment since auction is not recerved to you!`,
         });
       }
+      if (doc.data().payment == 2) {
+        return res
+          .status(400)
+          .json({ error: 'Payment has been done already!' });
+      }
+      return doc.ref.update({ payment: 2 }).then(() => {
+        return res.json({
+          message: 'Payment has been succesful!',
+        });
+      });
     })
     .catch((err) => {
       console.error(err);
@@ -289,9 +306,10 @@ exports.bidOnAuction = (req, res) => {
           .status(404)
           .json({ error: 'Not allowed to bid, Auction not approve!' });
       }
+
       if (
-        doc.data().maxBid >= req.body.bidAmount ||
-        doc.data().initAmount >= req.body.bidAmount
+        parseFloat(doc.data().maxBid) >= parseFloat(req.body.bidAmount) ||
+        parseFloat(doc.data().initAmount) >= parseFloat(req.body.bidAmount)
       ) {
         return res
           .status(404)
@@ -339,6 +357,11 @@ exports.deleteAuction = (req, res) => {
       if (doc.data().userId !== req.user.uid) {
         return res.status(404).json({ error: 'Unauthorized' });
       }
+      if (doc.data().sold != 0) {
+        return res
+          .status(404)
+          .json({ error: 'Auction has reserved or end, can not delete!' });
+      }
       if (doc.data().bids > 0) {
         return res.status(404).json({
           error: `Can not delete, ${doc.data().bids} bids are available`,
@@ -373,6 +396,9 @@ const auctionFetch = (data) => {
       sold: doc.data().sold,
       buyNowAmount: doc.data().buyNowAmount,
       payment: doc.data().payment,
+
+      delivery: doc.data().delivery,
+
       maxBidUserId: doc.data().maxBidUserId,
     });
   });

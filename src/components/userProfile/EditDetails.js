@@ -29,7 +29,7 @@ class EditDetails extends Component {
   }
 
   handleClose = () => {
-    store.dispatch({ type: SET_USER_MENU_INDEX, payload: 3 });
+    this.props.close();
     this.setState({ open: false });
   };
   handleChange = (event) => {

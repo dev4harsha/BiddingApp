@@ -2,22 +2,18 @@ import React, { Component } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 
 import { Container, Grid } from '@material-ui/core';
-import { TabPanel, TabContext } from '@material-ui/lab';
+
 import ProfileDetails from '../components/userProfile/ProfileDetails';
 
-import ViewAuction from '../components/userProfile/ViewAuction';
-import ListSubheader from '@material-ui/core/ListSubheader';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import Collapse from '@material-ui/core/Collapse';
-import InboxIcon from '@material-ui/icons/MoveToInbox';
-import DraftsIcon from '@material-ui/icons/Drafts';
-import SendIcon from '@material-ui/icons/Send';
+
 import ExpandLess from '@material-ui/icons/ExpandLess';
 import ExpandMore from '@material-ui/icons/ExpandMore';
-import StarBorder from '@material-ui/icons/StarBorder';
+
 import AccountBoxIcon from '@material-ui/icons/AccountBox';
 import EditIcon from '@material-ui/icons/Edit';
 import TimelineIcon from '@material-ui/icons/Timeline';
@@ -28,6 +24,13 @@ import { SET_USER_MENU_INDEX } from '../redux/types';
 import { connect } from 'react-redux';
 import EditDetails from '../components/userProfile/EditDetails';
 import SnackBar from '../components/SnackBar';
+import BidAuctions from '../components/userProfile/BidAuctions';
+import MyAuctions from '../components/userProfile/MyAuctions';
+import HistoryBuySell from '../components/userProfile/HistoryBuySell';
+import AuctionDelivery from '../components/userProfile/AuctionDelivery';
+import { Route, matchPath, withRouter, Switch } from 'react-router';
+import { Link } from 'react-router-dom';
+import { parseWithOptions } from 'date-fns/fp';
 const styles = (theme) => ({
   ...theme.spreadThis,
   container: {
@@ -54,23 +57,23 @@ class UserProfile extends Component {
       openAuction: false,
       openHistory: false,
       openProfile: false,
+      path: '/',
+      selectedIndex: null,
     };
     this.handleListItemClick = this.handleListItemClick.bind(this);
   }
-
   componentWillMount() {
     this.setState({
-      openAuction: this.props.userMenuIndex === 1 ? true : false,
-    });
-    this.setState({
-      openHistory: this.props.userMenuIndex === 2 ? true : false,
-    });
-    this.setState({
-      openProfile: this.props.userMenuIndex === 3 ? true : false,
+      selectedIndex: this.props.history.location.state
+        ? this.props.history.location.state.selectedIndex
+        : 0,
     });
   }
-  handleListItemClick = (event, index) => {
-    store.dispatch({ type: SET_USER_MENU_INDEX, payload: index });
+  handleListItemClick = (event, index, path) => {
+    this.setState({ selectedIndex: index });
+    this.props.history.push(path, { selectedIndex: index });
+
+    this.setState({ path: path });
     (index === 1 && !this.state.openAuction) || index === 10
       ? this.setState({ openAuction: true })
       : this.setState({ openAuction: false });
@@ -84,52 +87,28 @@ class UserProfile extends Component {
   handleChange = (event, newValue) => {
     this.setState({ value: newValue });
   };
-
+  handleDialog = () => {
+    this.props.history.goBack();
+    this.setState({
+      selectedIndex: parseInt(
+        this.state.selectedIndex.toString().substring(0, 1)
+      ),
+    });
+  };
   render() {
     const {
       classes,
       UI: { message, errors },
     } = this.props;
-    const { openHistory, openAuction, openProfile } = this.state;
-    let selectedIndex = this.props.userMenuIndex;
-    let selectedMenuView;
-    switch (selectedIndex) {
-      case 0:
-        selectedMenuView = <ViewAuction componentType="bidAuctions" />;
-        break;
-      case 1:
 
-      case 10:
-        selectedMenuView = <ViewAuction componentType="auctions" />;
-        if (selectedIndex === 10)
-          selectedMenuView = (
-            <>
-              {selectedMenuView} <AddEditAuction />
-            </>
-          );
-        break;
+    const {
+      openHistory,
+      openAuction,
+      openProfile,
+      path,
+      selectedIndex,
+    } = this.state;
 
-      case 20:
-        selectedMenuView = <ViewAuction componentType="sell" />;
-        break;
-      case 21:
-        selectedMenuView = <ViewAuction componentType="buy" />;
-        break;
-      case 3:
-      case 30:
-        selectedMenuView = <ProfileDetails />;
-        if (selectedIndex === 30)
-          selectedMenuView = (
-            <>
-              {selectedMenuView} <EditDetails />
-            </>
-          );
-
-        break;
-
-      default:
-        break;
-    }
     return (
       <>
         <Container className={classes.container}>
@@ -139,7 +118,9 @@ class UserProfile extends Component {
                 <ListItem
                   selected={selectedIndex === 0}
                   button
-                  onClick={(event) => this.handleListItemClick(event, 0)}
+                  onClick={(event) =>
+                    this.handleListItemClick(event, 0, '/user')
+                  }
                 >
                   <ListItemIcon>
                     <DnsIcon />
@@ -149,7 +130,9 @@ class UserProfile extends Component {
                 <ListItem
                   selected={selectedIndex === 1}
                   button
-                  onClick={(event) => this.handleListItemClick(event, 1)}
+                  onClick={(event) =>
+                    this.handleListItemClick(event, 1, '/user/myAuctions')
+                  }
                 >
                   <ListItemIcon>
                     <DnsIcon />
@@ -163,7 +146,13 @@ class UserProfile extends Component {
                       className={classes.nested}
                       selected={selectedIndex === 10}
                       button
-                      onClick={(event) => this.handleListItemClick(event, 10)}
+                      onClick={(event) =>
+                        this.handleListItemClick(
+                          event,
+                          10,
+                          '/user/myAuctions/addAuction'
+                        )
+                      }
                     >
                       <ListItemIcon>
                         <EditIcon />
@@ -174,7 +163,9 @@ class UserProfile extends Component {
                 </Collapse>
                 <ListItem
                   button
-                  onClick={(event) => this.handleListItemClick(event, 2)}
+                  onClick={(event) =>
+                    this.handleListItemClick(event, 2, '/user/history')
+                  }
                   selected={selectedIndex === 2}
                 >
                   <ListItemIcon>
@@ -189,7 +180,13 @@ class UserProfile extends Component {
                       className={classes.nested}
                       selected={selectedIndex === 20}
                       button
-                      onClick={(event) => this.handleListItemClick(event, 20)}
+                      onClick={(event) =>
+                        this.handleListItemClick(
+                          event,
+                          20,
+                          '/user/history/sell'
+                        )
+                      }
                     >
                       <ListItemIcon>
                         <EditIcon />
@@ -200,7 +197,9 @@ class UserProfile extends Component {
                       className={classes.nested}
                       selected={selectedIndex === 21}
                       button
-                      onClick={(event) => this.handleListItemClick(event, 21)}
+                      onClick={(event) =>
+                        this.handleListItemClick(event, 21, '/user/history/buy')
+                      }
                     >
                       <ListItemIcon>
                         <EditIcon />
@@ -212,7 +211,9 @@ class UserProfile extends Component {
                 <ListItem
                   selected={selectedIndex === 3}
                   button
-                  onClick={(event) => this.handleListItemClick(event, 3)}
+                  onClick={(event) =>
+                    this.handleListItemClick(event, 3, '/user/profile')
+                  }
                 >
                   <ListItemIcon>
                     <AccountBoxIcon />
@@ -227,7 +228,13 @@ class UserProfile extends Component {
                     className={classes.nested}
                     selected={selectedIndex === 30}
                     button
-                    onClick={(event) => this.handleListItemClick(event, 30)}
+                    onClick={(event) =>
+                      this.handleListItemClick(
+                        event,
+                        30,
+                        '/user/profile/editDetails'
+                      )
+                    }
                   >
                     <ListItemIcon>
                       <EditIcon />
@@ -238,7 +245,45 @@ class UserProfile extends Component {
               </Collapse>
             </Grid>
             <Grid className={classes.subGrid} item sm={8} md={9} md={9}>
-              {selectedMenuView}
+              {/* {selectedMenuView} */}
+              <Switch>
+                <Route exact path={this.props.match.url}>
+                  <BidAuctions />
+                </Route>
+
+                <Route
+                  exact
+                  path={`${this.props.match.url}/myAuctions/:auctionId/delivery`}
+                >
+                  <AuctionDelivery />
+                </Route>
+                <Route path={`${this.props.match.url}/myAuctions`}>
+                  <MyAuctions />
+                  {matchPath(this.props.history.location.pathname, {
+                    path: `${this.props.match.url}/myAuctions/addAuction`,
+                    exact: true,
+                    strict: false,
+                  }) && (
+                    <AddEditAuction open={true} close={this.handleDialog} />
+                  )}
+                </Route>
+
+                <Route exact path={`${this.props.match.url}/history`}></Route>
+                <Route exact path={`${this.props.match.url}/history/buy`}>
+                  <HistoryBuySell componentType="buy" />
+                </Route>
+                <Route exact path={`${this.props.match.url}/history/sell`}>
+                  <HistoryBuySell componentType="sell" />
+                </Route>
+                <Route path={`${this.props.match.url}/profile`}>
+                  <ProfileDetails />
+                  {matchPath(this.props.history.location.pathname, {
+                    path: `${this.props.match.url}/profile/editDetails`,
+                    exact: true,
+                    strict: false,
+                  }) && <EditDetails open={true} close={this.handleDialog} />}
+                </Route>
+              </Switch>
             </Grid>
           </Grid>
         </Container>
@@ -250,4 +295,6 @@ const mapStateToProps = (state) => ({
   userMenuIndex: state.UI.userMenuIndex,
   UI: state.UI,
 });
-export default connect(mapStateToProps, {})(withStyles(styles)(UserProfile));
+export default withRouter(
+  connect(mapStateToProps, {})(withStyles(styles)(UserProfile))
+);

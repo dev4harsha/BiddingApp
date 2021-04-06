@@ -38,16 +38,14 @@ class AddEditAuction extends Component {
       initAmount: '',
       itemDescription: '',
       buyNowAmount: '',
-      open: true,
+      open: this.props.open,
       errors: {},
     };
   }
 
   handleClose = () => {
-    store.dispatch({ type: SET_USER_MENU_INDEX, payload: 1 });
-
     this.setState({ open: false });
-    if (this.props.close) this.props.close();
+    this.props.close();
   };
   handleChange = (event) => {
     this.setState({
