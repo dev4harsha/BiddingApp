@@ -106,28 +106,38 @@ class BidAuctions extends Component {
                   <Typography variant="h6">{userAuction.maxBid}</Typography>
                 )}
               </Grid>
-              <Grid item>
-                <Typography variant="body2">Payment Status</Typography>
-                {userAuction.maxBidUserId === credentials.userId &&
-                userAuction.sold === 1 &&
-                userAuction.payment == 1 ? (
-                  <Button
-                    variant="outlined"
-                    size="small"
-                    color="primary"
-                    onClick={() =>
-                      this.handleMakePayment(userAuction.auctionId, index)
-                    }
-                  >
-                    Make Payment
-                  </Button>
-                ) : userAuction.maxBidUserId === credentials.userId &&
-                  userAuction.sold === 1 ? (
+              {userAuction.approval === 1 && (
+                <Grid item>
+                  <Typography variant="body2">Auction Status</Typography>
+
                   <Typography variant="h6">
-                    {paymentBuyerStatus[userAuction.payment]}
+                    {soldStatus[userAuction.sold]}
                   </Typography>
-                ) : null}
-              </Grid>
+                </Grid>
+              )}
+              {userAuction.maxBidUserId === credentials.userId &&
+                userAuction.sold === 1 && (
+                  <Grid item>
+                    <Typography variant="body2">Payment Status</Typography>
+                    {userAuction.payment == 1 ? (
+                      <Button
+                        variant="outlined"
+                        size="small"
+                        color="primary"
+                        onClick={() =>
+                          this.handleMakePayment(userAuction.auctionId, index)
+                        }
+                      >
+                        Make Payment
+                      </Button>
+                    ) : userAuction.maxBidUserId === credentials.userId &&
+                      userAuction.sold === 1 ? (
+                      <Typography variant="h6">
+                        {paymentBuyerStatus[userAuction.payment]}
+                      </Typography>
+                    ) : null}
+                  </Grid>
+                )}
 
               {userAuction.maxBidUserId === credentials.userId &&
                 userAuction.sold === 1 &&

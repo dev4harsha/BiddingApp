@@ -124,7 +124,7 @@ class MyAuctions extends Component {
                   {approvalStatus[userAuction.approval]}
                 </Typography>
               </Grid>
-              {userAuction.approval == 1 && (
+              {userAuction.approval === 1 && (
                 <Grid item>
                   <Typography variant="body2">Auction Status</Typography>
 

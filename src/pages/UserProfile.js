@@ -88,7 +88,7 @@ class UserProfile extends Component {
     this.setState({ value: newValue });
   };
   handleDialog = () => {
-    this.props.history.goBack();
+    // this.props.history.goBack();
     this.setState({
       selectedIndex: parseInt(
         this.state.selectedIndex.toString().substring(0, 1)

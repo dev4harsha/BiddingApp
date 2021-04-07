@@ -18,7 +18,7 @@ class ViewAuctionPopDetails extends Component {
   };
   render() {
     const { open, userAuction } = this.props;
-    console.log(open);
+
     return (
       <Dialog
         open={open}
