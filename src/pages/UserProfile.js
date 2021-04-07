@@ -250,13 +250,6 @@ class UserProfile extends Component {
                 <Route exact path={this.props.match.url}>
                   <BidAuctions />
                 </Route>
-
-                <Route
-                  exact
-                  path={`${this.props.match.url}/myAuctions/:auctionId/delivery`}
-                >
-                  <AuctionDelivery />
-                </Route>
                 <Route path={`${this.props.match.url}/myAuctions`}>
                   <MyAuctions />
                   {matchPath(this.props.history.location.pathname, {
@@ -282,6 +275,15 @@ class UserProfile extends Component {
                     exact: true,
                     strict: false,
                   }) && <EditDetails open={true} close={this.handleDialog} />}
+                </Route>
+                <Route
+                  path={`${this.props.match.url}/:from/delivery/:auctionId`}
+                >
+                  {matchPath(this.props.history.location.pathname, {
+                    path: `${this.props.match.url}/(bidAuction|myAuction)/delivery/:auctionId`,
+                    exact: true,
+                    strict: false,
+                  }) && <AuctionDelivery />}
                 </Route>
               </Switch>
             </Grid>

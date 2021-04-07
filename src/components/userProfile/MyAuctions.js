@@ -55,10 +55,9 @@ class MyAuctions extends Component {
     loadDelivery: false,
   };
   viewDelivery(auctionId, index) {
-    this.props.history.push(`/user/myAuctions/${auctionId}/delivery`, {
-      auctionId: auctionId,
-      index: index,
+    this.props.history.push(`/user/myAuction/delivery/${auctionId}`, {
       selectedIndex: 1,
+      isSeller: true,
     });
   }
   handleEditDialog = (userAuction = null, index = null) => {
@@ -266,11 +265,6 @@ class MyAuctions extends Component {
             close={this.handleEditDialog}
           />
         )}
-        {/* <Switch>
-          <Route exact path="/user/myAuctions/delivery">
-            <AuctionDelivery />
-          </Route>
-        </Switch> */}
       </>
     );
   }

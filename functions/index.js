@@ -26,6 +26,8 @@ const {
   userAuctionsSell,
   userAuctionsBuy,
   bidAuctions,
+  getUserAuction,
+  deliveryAuction,
 } = require('./handler/auctions');
 const {
   signup,
@@ -51,6 +53,8 @@ app.get('/auction/:auctionId/delete', FBAuth, deleteAuction); //done
 app.get('/auctionsSell', FBAuth, userAuctionsSell);
 app.get('/auctionsBuy', FBAuth, userAuctionsBuy);
 app.get('/auction/:auctionId/makePayment', FBAuth, makePayment);
+app.get('/auction/userAuction/:auctionId', FBAuth, getUserAuction);
+app.get('/auction/:auctionId/delivery/:status', FBAuth, deliveryAuction); //done
 
 //blogPost
 app.post('/blogPost', FBAuth, postOneBlog);

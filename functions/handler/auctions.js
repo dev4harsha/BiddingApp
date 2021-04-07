@@ -277,6 +277,25 @@ exports.getAuction = (req, res) => {
     });
 };
 
+exports.getUserAuction = (req, res) => {
+  let auctionData = {};
+  let auctionDoc = db.doc(`/auctions/${req.params.auctionId}`);
+
+  auctionDoc
+    .get()
+    .then((doc) => {
+      if (!doc.exists) {
+        return res.status(400).json({ error: 'Auction not found!' });
+      }
+
+      return res.json(doc.data());
+    })
+
+    .catch((err) => {
+      console.error(err);
+      res.status(500).json({ error: err });
+    });
+};
 exports.bidOnAuction = (req, res) => {
   const newBid = {
     createdAt: new Date(),
@@ -378,6 +397,75 @@ exports.deleteAuction = (req, res) => {
     });
 };
 
+exports.deliveryAuction = (req, res) => {
+  const documnet = db.doc(`/auctions/${req.params.auctionId}`);
+
+  documnet
+    .get()
+    .then((doc) => {
+      if (!doc.exists) {
+        return res.status(404).json({ error: 'Auction not found' });
+      }
+      if (
+        doc.data().userId !== req.user.uid &&
+        doc.data().maxBidUserId !== req.user.uid
+      ) {
+        return res.status(404).json({ error: 'Unauthorized' });
+      }
+      if (doc.data().sold != 1) {
+        return res
+          .status(404)
+          .json({ error: 'Auction has not reserved , delivery faild!!' });
+      }
+
+      if (doc.data().userId === req.user.uid && req.params.status === '1') {
+        return doc.ref.update({ delivery: 1 }).then(() => {
+          return res
+            .json({
+              message: 'Successfully delivered!',
+            })
+            .catch((err) => {
+              console.error(err);
+              return res.status(500).json({ error: err.code });
+            });
+        });
+      } else if (
+        doc.data().maxBidUserId === req.user.uid &&
+        (req.params.status === '2' || req.params.status === '3')
+      ) {
+        if (req.params.status === '2') {
+          return doc.ref.update({ delivery: 2 }).then(() => {
+            return res
+              .json({
+                message: 'Requested Redelivery!',
+              })
+              .catch((err) => {
+                console.error(err);
+                return res.status(500).json({ error: err.code });
+              });
+          });
+        } else if (req.params.status === '3') {
+          return doc.ref
+            .update({ delivery: 3 })
+            .then(() => {
+              return res.json({
+                message: 'Delivered Accepted!',
+              });
+            })
+            .catch((err) => {
+              console.error(err);
+              return res.status(500).json({ error: err.code });
+            });
+        }
+      }
+      return res.status(500).json({ error: 'Reqest not accepted!' });
+    })
+
+    .catch((err) => {
+      console.error(err);
+      return res.status(500).json({ error: err.code });
+    });
+};
 const auctionFetch = (data) => {
   let auctions = [];
   data.forEach((doc) => {
@@ -400,6 +488,7 @@ const auctionFetch = (data) => {
       delivery: doc.data().delivery,
 
       maxBidUserId: doc.data().maxBidUserId,
+      userId: doc.data().userId,
     });
   });
   return auctions;

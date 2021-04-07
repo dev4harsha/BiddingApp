@@ -10,7 +10,7 @@ export const paymentSellerStatus = [
 export const paymentBuyerStatus = [
   'No Action buyer',
   'Make payment',
-  'Sent',
+  'On clearence',
   'Paid',
   'Refund Requested',
   'Refund received',
@@ -18,7 +18,7 @@ export const paymentBuyerStatus = [
 export const buyerDeliveryStatus = [
   'Waiting',
   'View Delivery',
-  'Rejected',
+  'Reqest Redelivery',
   'Confirmed',
 ];
 export const sellerDeliveryStatus = [

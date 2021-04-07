@@ -24,6 +24,7 @@ import {
 import VisibilityIcon from '@material-ui/icons/Visibility';
 import ViewAuctionPopDetails from './ViewAuctionPopDetails';
 import MonetizationOnIcon from '@material-ui/icons/MonetizationOn';
+import { withRouter } from 'react-router';
 
 const styles = (theme) => ({
   gridContainer: {
@@ -42,6 +43,12 @@ class BidAuctions extends Component {
     viweAuctionPop: false,
     userAuction: null,
   };
+  viewDelivery(auctionId) {
+    this.props.history.push(`/user/bidAuction/delivery/${auctionId}`, {
+      selectedIndex: 0,
+      isBuyer: true,
+    });
+  }
   handleViewAuctionPop(userAuction = null) {
     this.setState({
       viweAuctionPop: !this.state.viweAuctionPop,
@@ -100,7 +107,7 @@ class BidAuctions extends Component {
                 )}
               </Grid>
               <Grid item>
-                <Typography variant="body2">Auction Status</Typography>
+                <Typography variant="body2">Payment Status</Typography>
                 {userAuction.maxBidUserId === credentials.userId &&
                 userAuction.sold === 1 &&
                 userAuction.payment == 1 ? (
@@ -119,34 +126,29 @@ class BidAuctions extends Component {
                   <Typography variant="h6">
                     {paymentBuyerStatus[userAuction.payment]}
                   </Typography>
-                ) : (
-                  <Typography variant="h6">
-                    {soldStatus[userAuction.sold]}
-                  </Typography>
-                )}
+                ) : null}
               </Grid>
-              {userAuction.maxBidUserId === credentials.userId &&
-                userAuction.sold === 1 &&
-                userAuction.paymentBuyer == 1 && (
-                  <Grid item>
-                    <Typography variant="body2">Delivery Status</Typography>
-                    <Typography variant="h6">
-                      {buyerDeliveryStatus[userAuction.delivery]}
-                    </Typography>
-                  </Grid>
-                )}
+
               {userAuction.maxBidUserId === credentials.userId &&
                 userAuction.sold === 1 &&
                 userAuction.payment == 2 && (
-                  <>
-                    <Grid item>
-                      <Typography variant="body2">Delivery Status</Typography>
-
+                  <Grid item>
+                    <Typography variant="body2">Delivery Status</Typography>
+                    {userAuction.delivery !== 0 ? (
+                      <Button
+                        variant="outlined"
+                        size="small"
+                        color="primary"
+                        onClick={() => this.viewDelivery(userAuction.auctionId)}
+                      >
+                        {buyerDeliveryStatus[userAuction.delivery]}
+                      </Button>
+                    ) : (
                       <Typography variant="h6">
                         {buyerDeliveryStatus[userAuction.delivery]}
                       </Typography>
-                    </Grid>
-                  </>
+                    )}
+                  </Grid>
                 )}
 
               <Grid item>
@@ -216,7 +218,6 @@ const mapActionsToProps = {
   getUserBidAuctions,
   makePayment,
 };
-export default connect(
-  mapStateProps,
-  mapActionsToProps
-)(withStyles(styles)(BidAuctions));
+export default withRouter(
+  connect(mapStateProps, mapActionsToProps)(withStyles(styles)(BidAuctions))
+);
