@@ -10,6 +10,8 @@ import { render } from 'react-dom';
 import { connect } from 'react-redux';
 import { getAuctions } from '../redux/actions/auctionActions';
 import PropTypes from 'prop-types';
+import { firestoreConnect } from 'react-redux-firebase';
+import { compose } from 'redux';
 
 const styles = (theme) => ({
   root: {},
@@ -72,7 +74,7 @@ const mapStateProps = (state) => ({
 const mapActionsToProps = {
   getAuctions,
 };
-export default connect(
-  mapStateProps,
-  mapActionsToProps
+export default compose(
+  connect(mapStateProps, mapActionsToProps),
+  firestoreConnect([{ collection: 'auctions' }])
 )(withStyles(styles)(Auction));

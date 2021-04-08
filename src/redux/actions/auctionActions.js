@@ -7,13 +7,11 @@ import {
   CLEAR_ERRORS,
   LOADING_UI,
   SET_MESSAGES,
-  SET_USER_AUCTIONS,
   USER_END_AUCTION,
   DELETE_USER_AUCTION,
   UPDATE_USER_AUCTION,
   USER_AUCTION_RESERVED,
   BUYER_PAYMENT_AUCTION,
-  SET_USER_AUCTION,
   SET_USER_DELIVERY,
 } from '../types';
 import axios from 'axios';
@@ -55,7 +53,7 @@ export const getUserAuction = (auctionId) => (dispatch) => {
   axios
     .get(`/auction/userAuction/${auctionId}`)
     .then((res) => {
-      dispatch({ type: SET_USER_AUCTION, payload: res.data });
+      dispatch({ type: SET_AUCTION, payload: res.data });
       dispatch({ type: CLEAR_ERRORS });
     })
     .catch((err) => {
@@ -138,7 +136,7 @@ export const getUserAuctions = () => (dispatch) => {
   axios
     .get('/userAuctions')
     .then((res) => {
-      dispatch({ type: SET_USER_AUCTIONS, payload: res.data });
+      dispatch({ type: SET_AUCTIONS, payload: res.data });
     })
     .catch((err) => {
       console.log(err);
@@ -150,7 +148,7 @@ export const getUserBidAuctions = () => (dispatch) => {
   axios
     .get('/bidAuctions')
     .then((res) => {
-      dispatch({ type: SET_USER_AUCTIONS, payload: res.data });
+      dispatch({ type: SET_AUCTIONS, payload: res.data });
     })
     .catch((err) => {
       console.log(err);
@@ -161,7 +159,7 @@ export const getUserAuctionsBuy = () => (dispatch) => {
   axios
     .get('/auctionsBuy')
     .then((res) => {
-      dispatch({ type: SET_USER_AUCTIONS, payload: res.data });
+      dispatch({ type: SET_AUCTIONS, payload: res.data });
     })
     .catch((err) => {
       console.log(err);
@@ -172,7 +170,7 @@ export const getUserAuctionsSell = () => (dispatch) => {
   axios
     .get('/auctionsSell')
     .then((res) => {
-      dispatch({ type: SET_USER_AUCTIONS, payload: res.data });
+      dispatch({ type: SET_AUCTIONS, payload: res.data });
     })
     .catch((err) => {
       console.log(err);

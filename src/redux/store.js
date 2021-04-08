@@ -4,15 +4,22 @@ import userReducer from './reducers/userReducer';
 import auctionReducer from './reducers/auctionReducer';
 import uiReducer from './reducers/uiReducer';
 import weblogReducer from './reducers/weblogReducer';
+import {
+  reduxFirestore,
+  getFirestore,
+  firestoreReducer,
+} from 'redux-firestore';
+import firebase from '../config/fbConfig';
 
 const initialState = {};
-const middleware = [thunk];
+const middleware = [thunk.withExtraArgument({ getFirestore })];
 
 const reducers = combineReducers({
   user: userReducer,
   auction: auctionReducer,
   UI: uiReducer,
   weblog: weblogReducer,
+  firestore: firestoreReducer,
 });
 
 const composeEnhancers =
@@ -23,8 +30,8 @@ const composeEnhancers =
     : compose;
 
 const enhancer = composeEnhancers(
-  applyMiddleware(...middleware)
-
+  applyMiddleware(...middleware),
+  reduxFirestore(firebase)
   // other store enhancers if any
 );
 const store = createStore(reducers, initialState, enhancer);

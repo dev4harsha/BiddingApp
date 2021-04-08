@@ -64,11 +64,11 @@ class HistoryBuySell extends Component {
   }
   render() {
     const { classes } = this.props;
-    const { userAuctions, loading } = this.props.auction;
+    const { auctions, loading } = this.props.auction;
 
     let bidAuctionMarkUp = !loading ? (
-      userAuctions.length > 0 ? (
-        userAuctions.map((userAuction, index) => (
+      auctions.length > 0 ? (
+        auctions.map((userAuction, index) => (
           <Paper className={classes.paper} key={index}>
             <Grid
               container

@@ -41,7 +41,7 @@ const styles = (theme) => ({
 class BidAuctions extends Component {
   state = {
     viweAuctionPop: false,
-    userAuction: null,
+    auction: null,
   };
   viewDelivery(auctionId) {
     this.props.history.push(`/user/bidAuction/delivery/${auctionId}`, {
@@ -49,10 +49,10 @@ class BidAuctions extends Component {
       isBuyer: true,
     });
   }
-  handleViewAuctionPop(userAuction = null) {
+  handleViewAuctionPop(auction = null) {
     this.setState({
       viweAuctionPop: !this.state.viweAuctionPop,
-      userAuction: userAuction,
+      auction: auction,
     });
   }
   componentWillMount() {
@@ -64,12 +64,12 @@ class BidAuctions extends Component {
 
   render() {
     const { classes } = this.props;
-    const { userAuctions, loading } = this.props.auction;
+    const { auctions, loading } = this.props.auction;
     const { credentials } = this.props.user;
 
     let bidAuctionMarkUp = !loading ? (
-      userAuctions.length > 0 ? (
-        userAuctions.map((userAuction, index) => (
+      auctions.length > 0 ? (
+        auctions.map((auction, index) => (
           <Paper className={classes.paper} key={index}>
             <Grid
               container
@@ -85,77 +85,74 @@ class BidAuctions extends Component {
             >
               <Grid item>
                 <Typography variant="body2">Auction Name</Typography>
-                {userAuction.auctionName && (
-                  <Typography variant="h6">
-                    {userAuction.auctionName}
-                  </Typography>
+                {auction.auctionName && (
+                  <Typography variant="h6">{auction.auctionName}</Typography>
                 )}
               </Grid>
 
               <Grid item>
                 <Typography variant="body2">Buy Now Price</Typography>
-                {userAuction.buyNowAmount && (
-                  <Typography variant="h6">
-                    {userAuction.buyNowAmount}
-                  </Typography>
+                {auction.buyNowAmount && (
+                  <Typography variant="h6">{auction.buyNowAmount}</Typography>
                 )}
               </Grid>
               <Grid item>
                 <Typography variant="body2">Heighest Bid</Typography>
-                {userAuction.maxBid && (
-                  <Typography variant="h6">{userAuction.maxBid}</Typography>
+                {auction.maxBid && (
+                  <Typography variant="h6">{auction.maxBid}</Typography>
                 )}
               </Grid>
-              {userAuction.approval === 1 && (
+              {auction.approval === 1 && (
                 <Grid item>
                   <Typography variant="body2">Auction Status</Typography>
 
                   <Typography variant="h6">
-                    {soldStatus[userAuction.sold]}
+                    {soldStatus[auction.sold]}
                   </Typography>
                 </Grid>
               )}
-              {userAuction.maxBidUserId === credentials.userId &&
-                userAuction.sold === 1 && (
+
+              {auction.maxBidUserId === credentials.userId &&
+                auction.sold === 1 && (
                   <Grid item>
                     <Typography variant="body2">Payment Status</Typography>
-                    {userAuction.payment == 1 ? (
+                    {auction.payment == 1 ? (
                       <Button
                         variant="outlined"
                         size="small"
                         color="primary"
                         onClick={() =>
-                          this.handleMakePayment(userAuction.auctionId, index)
+                          this.handleMakePayment(auction.auctionId, index)
                         }
                       >
                         Make Payment
                       </Button>
-                    ) : userAuction.maxBidUserId === credentials.userId &&
-                      userAuction.sold === 1 ? (
+                    ) : auction.maxBidUserId === credentials.userId &&
+                      auction.sold === 1 ? (
                       <Typography variant="h6">
-                        {paymentBuyerStatus[userAuction.payment]}
+                        {paymentBuyerStatus[auction.payment]}
                       </Typography>
                     ) : null}
                   </Grid>
                 )}
 
-              {userAuction.maxBidUserId === credentials.userId &&
-                userAuction.sold === 1 &&
-                userAuction.payment == 2 && (
+              {auction.maxBidUserId === credentials.userId &&
+                auction.sold === 1 &&
+                auction.payment == 2 && (
                   <Grid item>
                     <Typography variant="body2">Delivery Status</Typography>
-                    {userAuction.delivery !== 0 ? (
+                    {auction.delivery !== 0 ? (
                       <Button
                         variant="outlined"
                         size="small"
                         color="primary"
-                        onClick={() => this.viewDelivery(userAuction.auctionId)}
+                        onClick={() => this.viewDelivery(auction.auctionId)}
                       >
-                        {buyerDeliveryStatus[userAuction.delivery]}
+                        {buyerDeliveryStatus[auction.delivery]}
                       </Button>
                     ) : (
                       <Typography variant="h6">
-                        {buyerDeliveryStatus[userAuction.delivery]}
+                        {buyerDeliveryStatus[auction.delivery]}
                       </Typography>
                     )}
                   </Grid>
@@ -165,7 +162,7 @@ class BidAuctions extends Component {
                 <Tooltip title="View Auction Details" aria-label="add">
                   <IconButton
                     color="secondary"
-                    onClick={() => this.handleViewAuctionPop(userAuction)}
+                    onClick={() => this.handleViewAuctionPop(auction)}
                   >
                     <VisibilityIcon />
                   </IconButton>
@@ -207,9 +204,9 @@ class BidAuctions extends Component {
     return (
       <>
         {bidAuctionMarkUp}
-        {this.state.userAuction && (
+        {this.state.auction && (
           <ViewAuctionPopDetails
-            userAuction={this.state.userAuction}
+            auction={this.state.auction}
             open={this.state.viweAuctionPop}
             close={() => this.handleViewAuctionPop()}
           />

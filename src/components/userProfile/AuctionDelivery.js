@@ -58,7 +58,7 @@ class AuctionDelivery extends Component {
     const {
       classes,
       user,
-      userAuction,
+      auction,
       UI: { loading },
     } = this.props;
     const { isSeller, isBuyer } = this.state;
@@ -79,7 +79,7 @@ class AuctionDelivery extends Component {
               Go Back
             </Button>
             {isSeller ? (
-              [0, 2].includes(userAuction.delivery) ? (
+              [0, 2].includes(auction.delivery) ? (
                 <>
                   <Button
                     variant="contained"
@@ -95,7 +95,7 @@ class AuctionDelivery extends Component {
               ) : null
             ) : isBuyer ? (
               <>
-                {userAuction.delivery === 1 ? (
+                {auction.delivery === 1 ? (
                   <>
                     <Button
                       variant="contained"
@@ -129,7 +129,7 @@ class AuctionDelivery extends Component {
 }
 const mapStateProps = (state) => ({
   user: state.user,
-  userAuction: state.auction.userAuction,
+  auction: state.auction.auction,
   UI: state.UI,
 });
 
