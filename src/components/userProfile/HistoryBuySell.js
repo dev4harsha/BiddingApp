@@ -48,7 +48,7 @@ class HistoryBuySell extends Component {
       userAuction: userAuction,
     });
   }
-  componentWillMount() {
+  componentDidMount() {
     this.loadDataToRedux(this.props);
   }
   componentWillReceiveProps(nextProps) {

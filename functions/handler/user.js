@@ -87,16 +87,9 @@ exports.addUserDetails = (req, res) => {
 
 exports.getAuthenticatedUser = (req, res) => {
   let userData = {};
-  db.doc(`/users/${req.user.uid}`)
+  db.collection('likes')
+    .where('userId', '==', req.user.uid)
     .get()
-    .then((doc) => {
-      if (doc.exists) {
-        userData.credentials = doc.data();
-        return db.collection('likes').where('userId', '==', req.user.uid).get();
-      } else {
-        return res.status(404).json({ error: 'user not found' });
-      }
-    })
     .then((data) => {
       userData.likes = [];
       data.forEach((doc) => {

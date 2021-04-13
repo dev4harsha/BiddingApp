@@ -15,34 +15,30 @@ import themeFile from './theme';
 import createMuiTheme from '@material-ui/core/styles/createMuiTheme';
 import { MuiPickersUtilsProvider } from '@material-ui/pickers';
 import MomentUtils from '@date-io/moment';
-const theme = createMuiTheme(themeFile);
+const themeF = createMuiTheme(themeFile);
 
-// store.dispatch(getPosts());
-// store.dispatch(getAuctions());
+// const token = localStorage.FBIdToken;
+// if (token) {
+//   const decodedToken = jwtDecode(token);
+//   if (decodedToken.exp * 1000 < Date.now()) {
+//     window.location.href = '/UserAuth';
+//     store.dispatch(logoutUser());
+//   } else {
+//     axios.defaults.headers.common['Authorization'] = token;
 
-const token = localStorage.FBIdToken;
-if (token) {
-  const decodedToken = jwtDecode(token);
-  if (decodedToken.exp * 1000 < Date.now()) {
-    //window.location.href = '/UserAuth';
-
-    store.dispatch(logoutUser());
-  } else {
-    store.dispatch({ type: SET_AUTHENTICATED });
-    axios.defaults.headers.common['Authorization'] = token;
-    store.dispatch(getUserData());
-  }
-}
+//     store.dispatch(getUserData());
+//   }
+// }
 
 ReactDOM.render(
   <Router>
-    <MuiThemeProvider theme={theme}>
-      <Provider store={store}>
+    <Provider store={store}>
+      <MuiThemeProvider theme={themeF}>
         <MuiPickersUtilsProvider utils={MomentUtils}>
           <App />
         </MuiPickersUtilsProvider>
-      </Provider>
-    </MuiThemeProvider>
+      </MuiThemeProvider>
+    </Provider>
   </Router>,
   document.getElementById('root')
 );

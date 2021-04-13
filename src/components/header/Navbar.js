@@ -31,7 +31,9 @@ class Navbar extends Component {
   };
 
   render() {
-    const { authenticated, user } = this.props;
+    const {
+      firebase: { auth, profile },
+    } = this.props;
 
     return (
       <>
@@ -116,7 +118,7 @@ class Navbar extends Component {
                     FAQ
                   </Link>
                 </li>
-                {authenticated ? (
+                {!auth.isEmpty ? (
                   <>
                     <li className="nav-item">
                       <Link
@@ -128,7 +130,7 @@ class Navbar extends Component {
                           <Avatar
                             variant="circular"
                             alt="Remy Sharp"
-                            src={user.credentials.imageUrl}
+                            src={profile.imageUrl}
                           />
                         </Button>
                       </Link>
@@ -171,12 +173,10 @@ class Navbar extends Component {
   }
 }
 const mapStateToProps = (state) => ({
-  authenticated: state.user.authenticated,
-  user: state.user,
+  firebase: state.firebase,
 });
 const mapActionsToProps = { logoutUser };
 Navbar.propTypes = {
-  authenticated: PropTypes.bool.isRequired,
   logoutUser: PropTypes.func.isRequired,
 };
 export default connect(mapStateToProps, mapActionsToProps)(Navbar);

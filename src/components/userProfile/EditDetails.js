@@ -52,21 +52,21 @@ class EditDetails extends Component {
     this.handleClose();
   };
   componentDidMount() {
-    const { credentials } = this.props;
-    this.mapUserDetailsToState(credentials);
+    const { user } = this.props;
+    this.mapUserDetailsToState(user);
   }
-  mapUserDetailsToState = (credentials) => {
+  mapUserDetailsToState = (user) => {
     this.setState({
-      country: credentials.country ? credentials.country : '',
-      firstName: credentials.firstName ? credentials.firstName : '',
-      lastName: credentials.lastName ? credentials.lastName : '',
-      mobile: credentials.mobile ? credentials.mobile : '',
+      country: user.country ? user.country : '',
+      firstName: user.firstName ? user.firstName : '',
+      lastName: user.lastName ? user.lastName : '',
+      mobile: user.mobile ? user.mobile : '',
     });
   };
   render() {
     const {
       classes,
-      user: { loading },
+      user: { isLoaded },
     } = this.props;
     return (
       <>
@@ -133,8 +133,7 @@ class EditDetails extends Component {
   }
 }
 const mapStateToProps = (state) => ({
-  credentials: state.user.credentials,
-  user: state.user,
+  user: state.firebase.profile,
 });
 EditDetails.propTypes = {
   editUserDetails: PropTypes.func.isRequired,

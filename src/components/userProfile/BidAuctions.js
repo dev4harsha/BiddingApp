@@ -55,7 +55,7 @@ class BidAuctions extends Component {
       auction: auction,
     });
   }
-  componentWillMount() {
+  componentDidMount() {
     this.props.getUserBidAuctions();
   }
   handleMakePayment = (auctionId, index) => {
@@ -63,9 +63,8 @@ class BidAuctions extends Component {
   };
 
   render() {
-    const { classes } = this.props;
+    const { classes, user } = this.props;
     const { auctions, loading } = this.props.auction;
-    const { credentials } = this.props.user;
 
     let bidAuctionMarkUp = !loading ? (
       auctions.length > 0 ? (
@@ -112,31 +111,30 @@ class BidAuctions extends Component {
                 </Grid>
               )}
 
-              {auction.maxBidUserId === credentials.userId &&
-                auction.sold === 1 && (
-                  <Grid item>
-                    <Typography variant="body2">Payment Status</Typography>
-                    {auction.payment == 1 ? (
-                      <Button
-                        variant="outlined"
-                        size="small"
-                        color="primary"
-                        onClick={() =>
-                          this.handleMakePayment(auction.auctionId, index)
-                        }
-                      >
-                        Make Payment
-                      </Button>
-                    ) : auction.maxBidUserId === credentials.userId &&
-                      auction.sold === 1 ? (
-                      <Typography variant="h6">
-                        {paymentBuyerStatus[auction.payment]}
-                      </Typography>
-                    ) : null}
-                  </Grid>
-                )}
+              {auction.maxBidUserId === user.userId && auction.sold === 1 && (
+                <Grid item>
+                  <Typography variant="body2">Payment Status</Typography>
+                  {auction.payment == 1 ? (
+                    <Button
+                      variant="outlined"
+                      size="small"
+                      color="primary"
+                      onClick={() =>
+                        this.handleMakePayment(auction.auctionId, index)
+                      }
+                    >
+                      Make Payment
+                    </Button>
+                  ) : auction.maxBidUserId === user.userId &&
+                    auction.sold === 1 ? (
+                    <Typography variant="h6">
+                      {paymentBuyerStatus[auction.payment]}
+                    </Typography>
+                  ) : null}
+                </Grid>
+              )}
 
-              {auction.maxBidUserId === credentials.userId &&
+              {auction.maxBidUserId === user.userId &&
                 auction.sold === 1 &&
                 auction.payment == 2 && (
                   <Grid item>
@@ -206,7 +204,7 @@ class BidAuctions extends Component {
         {bidAuctionMarkUp}
         {this.state.auction && (
           <ViewAuctionPopDetails
-            auction={this.state.auction}
+            userAuction={this.state.auction}
             open={this.state.viweAuctionPop}
             close={() => this.handleViewAuctionPop()}
           />
@@ -218,7 +216,7 @@ class BidAuctions extends Component {
 BidAuctions.propTypes = { classes: PropTypes.object.isRequired };
 const mapStateProps = (state) => ({
   auction: state.auction,
-  user: state.user,
+  user: state.firebase.profile,
 });
 
 const mapActionsToProps = {

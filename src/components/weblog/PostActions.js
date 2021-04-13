@@ -33,9 +33,9 @@ class PostActions extends Component {
 
   render() {
     const { classes, likes, postId } = this.props;
-    const { authenticated } = this.props.user;
+    const { isEmpty } = this.props.auth;
 
-    const likeUnlikeButtons = !authenticated ? (
+    const likeUnlikeButtons = isEmpty ? (
       <>
         <Button
           size="small"
@@ -95,6 +95,7 @@ PostActions.propTypes = {
 const mapStateToProps = (state) => ({
   user: state.user,
   posts: state.weblog.posts,
+  auth: state.firebase.auth,
 });
 export default connect(mapStateToProps, { likeUnlikePost })(
   withRouter(withStyles(styles)(PostActions))

@@ -20,7 +20,7 @@ import TimelineIcon from '@material-ui/icons/Timeline';
 import DnsIcon from '@material-ui/icons/Dns';
 import AddEditAuction from '../components/userProfile/AddEditAuction';
 import store from '../redux/store';
-import { SET_USER_MENU_INDEX } from '../redux/types';
+import { GET_USER_TOKEN, SET_USER_MENU_INDEX } from '../redux/types';
 import { connect } from 'react-redux';
 import EditDetails from '../components/userProfile/EditDetails';
 import SnackBar from '../components/SnackBar';
@@ -49,6 +49,17 @@ const styles = (theme) => ({
   },
 });
 
+const pathList = {
+  0: '/user',
+  1: '/user/myAuctions',
+  10: '/user/myAuctions/addAuction',
+  2: '/user/history',
+  20: '/user/history/sell',
+  21: '/user/history/buy',
+  3: '/user/profile',
+  30: '/user/profile/editDetails',
+};
+
 class UserProfile extends Component {
   constructor() {
     super();
@@ -61,39 +72,48 @@ class UserProfile extends Component {
       selectedIndex: null,
     };
     this.handleListItemClick = this.handleListItemClick.bind(this);
+    this.handleDialog = this.handleDialog.bind(this);
   }
-  componentWillMount() {
+  componentDidMount() {
+    const historyIndex = this.props.history.location.state
+      ? this.props.history.location.state.selectedIndex
+      : 0;
     this.setState({
-      selectedIndex: this.props.history.location.state
-        ? this.props.history.location.state.selectedIndex
-        : 0,
+      selectedIndex: historyIndex,
     });
+    this.handleChangeOpen(historyIndex);
   }
-  handleListItemClick = (event, index, path) => {
-    this.setState({ selectedIndex: index });
-    this.props.history.push(path, { selectedIndex: index });
 
-    this.setState({ path: path });
-    (index === 1 && !this.state.openAuction) || index === 10
+  handleListItemClick = (event, index) => {
+    this.setState({ selectedIndex: index });
+    this.props.history.push(pathList[index], { selectedIndex: index });
+    this.setState({ path: pathList[index] });
+    this.handleChangeOpen(index);
+  };
+  handleChangeOpen = (index) => {
+    index === 1 || index === 10
       ? this.setState({ openAuction: true })
       : this.setState({ openAuction: false });
-    (index === 2 && !this.state.openHistory) || index === 20 || index === 21
+    index === 2 || index === 20 || index === 21
       ? this.setState({ openHistory: true })
       : this.setState({ openHistory: false });
-    (index === 3 && !this.state.openProfile) || index === 30
+    index === 3 || index === 30
       ? this.setState({ openProfile: true })
       : this.setState({ openProfile: false });
   };
-  handleChange = (event, newValue) => {
-    this.setState({ value: newValue });
-  };
   handleDialog = () => {
     // this.props.history.goBack();
+
     this.setState({
       selectedIndex: parseInt(
         this.state.selectedIndex.toString().substring(0, 1)
       ),
     });
+
+    this.handleListItemClick(
+      null,
+      parseInt(this.state.selectedIndex.toString().substring(0, 1))
+    );
   };
   render() {
     const {
@@ -118,9 +138,7 @@ class UserProfile extends Component {
                 <ListItem
                   selected={selectedIndex === 0}
                   button
-                  onClick={(event) =>
-                    this.handleListItemClick(event, 0, '/user')
-                  }
+                  onClick={(event) => this.handleListItemClick(event, 0)}
                 >
                   <ListItemIcon>
                     <DnsIcon />
@@ -130,9 +148,7 @@ class UserProfile extends Component {
                 <ListItem
                   selected={selectedIndex === 1}
                   button
-                  onClick={(event) =>
-                    this.handleListItemClick(event, 1, '/user/myAuctions')
-                  }
+                  onClick={(event) => this.handleListItemClick(event, 1)}
                 >
                   <ListItemIcon>
                     <DnsIcon />
@@ -146,13 +162,7 @@ class UserProfile extends Component {
                       className={classes.nested}
                       selected={selectedIndex === 10}
                       button
-                      onClick={(event) =>
-                        this.handleListItemClick(
-                          event,
-                          10,
-                          '/user/myAuctions/addAuction'
-                        )
-                      }
+                      onClick={(event) => this.handleListItemClick(event, 10)}
                     >
                       <ListItemIcon>
                         <EditIcon />
@@ -163,9 +173,7 @@ class UserProfile extends Component {
                 </Collapse>
                 <ListItem
                   button
-                  onClick={(event) =>
-                    this.handleListItemClick(event, 2, '/user/history')
-                  }
+                  onClick={(event) => this.handleListItemClick(event, 2)}
                   selected={selectedIndex === 2}
                 >
                   <ListItemIcon>
@@ -180,13 +188,7 @@ class UserProfile extends Component {
                       className={classes.nested}
                       selected={selectedIndex === 20}
                       button
-                      onClick={(event) =>
-                        this.handleListItemClick(
-                          event,
-                          20,
-                          '/user/history/sell'
-                        )
-                      }
+                      onClick={(event) => this.handleListItemClick(event, 20)}
                     >
                       <ListItemIcon>
                         <EditIcon />
@@ -197,9 +199,7 @@ class UserProfile extends Component {
                       className={classes.nested}
                       selected={selectedIndex === 21}
                       button
-                      onClick={(event) =>
-                        this.handleListItemClick(event, 21, '/user/history/buy')
-                      }
+                      onClick={(event) => this.handleListItemClick(event, 21)}
                     >
                       <ListItemIcon>
                         <EditIcon />
@@ -211,9 +211,7 @@ class UserProfile extends Component {
                 <ListItem
                   selected={selectedIndex === 3}
                   button
-                  onClick={(event) =>
-                    this.handleListItemClick(event, 3, '/user/profile')
-                  }
+                  onClick={(event) => this.handleListItemClick(event, 3)}
                 >
                   <ListItemIcon>
                     <AccountBoxIcon />
@@ -228,13 +226,7 @@ class UserProfile extends Component {
                     className={classes.nested}
                     selected={selectedIndex === 30}
                     button
-                    onClick={(event) =>
-                      this.handleListItemClick(
-                        event,
-                        30,
-                        '/user/profile/editDetails'
-                      )
-                    }
+                    onClick={(event) => this.handleListItemClick(event, 30)}
                   >
                     <ListItemIcon>
                       <EditIcon />

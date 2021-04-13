@@ -3,12 +3,12 @@ import { Route, Redirect, withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
-const AuthRoute = ({ component: Component, authenticated, ...rest }) => {
+const AuthRoute = ({ component: Component, auth, ...rest }) => {
   return (
     <Route
       {...rest}
       render={(props) =>
-        authenticated === true ? (
+        auth === true ? (
           <Component {...props} />
         ) : (
           <Redirect
@@ -23,9 +23,9 @@ const AuthRoute = ({ component: Component, authenticated, ...rest }) => {
   );
 };
 const mapStateToProps = (state) => ({
-  authenticated: state.user.authenticated,
+  auth: !state.firebase.auth.isEmpty,
 });
 AuthRoute.propTypes = {
-  authenticated: PropTypes.bool.isRequired,
+  auth: PropTypes.bool.isRequired,
 };
 export default withRouter(connect(mapStateToProps)(AuthRoute));

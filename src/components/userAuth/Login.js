@@ -55,7 +55,7 @@ class Login extends Component {
     if (nextProps.UI.errors) {
       this.setState({ errors: nextProps.UI.errors });
     }
-    if (nextProps.user.authenticated) {
+    if (!nextProps.auth.isEmpty) {
       nextProps.history.location.state
         ? nextProps.history.push(nextProps.history.location.state.from)
         : nextProps.history.push('/user');
@@ -74,7 +74,7 @@ class Login extends Component {
   render() {
     const {
       classes,
-      UI: { loading },
+      auth: { isLoaded },
     } = this.props;
     const { errors } = this.state;
     return (
@@ -123,7 +123,7 @@ class Login extends Component {
             variant="contained"
             color="primary"
             type="submit"
-            disabled={loading}
+            disabled={!isLoaded}
           >
             Login
           </Button>
@@ -136,13 +136,12 @@ class Login extends Component {
 Login.propType = {
   classes: PropTypes.object.isRequired,
   loginUser: PropTypes.func.isRequired,
-  user: PropTypes.object.isRequired,
   UI: PropTypes.object.isRequired,
 };
 //takes globl stats
 const mapStateProps = (state) => ({
+  auth: state.firebase.auth,
   UI: state.UI,
-  user: state.user,
 });
 //which action we use
 const mapActionsToProps = {

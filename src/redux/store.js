@@ -9,10 +9,22 @@ import {
   getFirestore,
   firestoreReducer,
 } from 'redux-firestore';
+import {
+  reactReduxFirebase,
+  firebaseReducer,
+  getFirebase,
+} from 'react-redux-firebase';
 import firebase from '../config/fbConfig';
+import fireReducer from './reducers/fireReducer';
+
+const rrfConfig = {
+  userProfile: 'users',
+  useFirestoreForProfile: true, // Firestore for Profile instead of Realtime DB
+  // enableClaims: true // Get custom claims along with the profile
+};
 
 const initialState = {};
-const middleware = [thunk.withExtraArgument({ getFirestore })];
+const middleware = [thunk.withExtraArgument({ getFirestore, getFirebase })];
 
 const reducers = combineReducers({
   user: userReducer,
@@ -20,6 +32,8 @@ const reducers = combineReducers({
   UI: uiReducer,
   weblog: weblogReducer,
   firestore: firestoreReducer,
+  firebase: firebaseReducer,
+  fire: fireReducer,
 });
 
 const composeEnhancers =
@@ -31,7 +45,8 @@ const composeEnhancers =
 
 const enhancer = composeEnhancers(
   applyMiddleware(...middleware),
-  reduxFirestore(firebase)
+  reduxFirestore(firebase),
+  reactReduxFirebase(firebase, rrfConfig)
   // other store enhancers if any
 );
 const store = createStore(reducers, initialState, enhancer);

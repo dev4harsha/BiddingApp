@@ -21,12 +21,26 @@ import UserAuth from './pages/UserAuth';
 
 import AuthRoute from './AuthRoute';
 import SnackBar from './components/SnackBar';
+import { connect } from 'react-redux';
+import axios from 'axios';
+import store from './redux/store';
+import {
+  logoutUser,
+  setAuthorizationHeader,
+} from './redux/actions/userActions';
 
 //theme
 
 //Redux
 
 class App extends Component {
+  // componentWillReceiveProps(nextProps) {
+  //   console.log(nextProps);
+
+  //   !nextProps.auth.isEmpty
+  //     ? setAuthorizationHeader(nextProps.auth.stsTokenManager.accessToken)
+  //     : null;
+  // }
   render() {
     return (
       <>
@@ -51,4 +65,7 @@ class App extends Component {
   }
 }
 
-export default App;
+const mapStateToProps = (state) => ({
+  auth: state.firebase.auth,
+});
+export default connect(mapStateToProps, { setAuthorizationHeader })(App);

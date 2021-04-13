@@ -56,8 +56,7 @@ class Register extends Component {
     if (nextProps.UI.errors) {
       this.setState({ errors: nextProps.UI.errors });
     }
-    if (nextProps.user.authenticated) {
-      console.log(nextProps.user.authenticated);
+    if (!nextProps.user.isEmpty) {
       nextProps.history.location.state
         ? nextProps.history.push(nextProps.history.location.state.from)
         : nextProps.history.push('/user');
@@ -149,13 +148,12 @@ class Register extends Component {
 Register.propType = {
   classes: PropTypes.object.isRequired,
 
-  user: PropTypes.object.isRequired,
   UI: PropTypes.object.isRequired,
   signupUser: PropTypes.func.isRequired,
 };
 //takes globl stats
 const mapStateProps = (state) => ({
-  user: state.user,
+  user: state.firebase.auth,
   UI: state.UI,
 });
 //which action we use

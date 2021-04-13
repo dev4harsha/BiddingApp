@@ -66,16 +66,14 @@ class ProfileDetails extends Component {
     const {
       classes,
       user: {
-        credentials: {
-          country,
-          email,
-          firstName,
-          lastName,
-          createdAt,
-          imageUrl,
-          mobile,
-        },
-        loading,
+        country,
+        email,
+        firstName,
+        lastName,
+        createdAt,
+        imageUrl,
+        mobile,
+        isLoaded,
       },
     } = this.props;
 
@@ -160,7 +158,7 @@ class ProfileDetails extends Component {
                     variant="contained"
                     color="primary"
                     component="span"
-                    disabled={loading}
+                    disabled={!isLoaded}
                   >
                     Change Image
                   </Button>
@@ -176,11 +174,10 @@ class ProfileDetails extends Component {
 }
 
 const mapStateToProps = (state) => ({
-  user: state.user,
+  user: state.firebase.profile,
 });
 const mapActionsToProps = { uploadImage };
 ProfileDetails.propTypes = {
-  user: PropTypes.object.isRequired,
   classes: PropTypes.object.isRequired,
   uploadImage: PropTypes.func.isRequired,
 };

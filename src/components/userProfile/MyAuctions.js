@@ -76,7 +76,7 @@ class MyAuctions extends Component {
       userAuction: userAuction,
     });
   }
-  componentWillMount() {
+  componentDidMount() {
     this.props.getUserAuctions();
   }
   handleDeleteUserAuction(auctionId, index) {
