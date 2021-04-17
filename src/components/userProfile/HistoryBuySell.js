@@ -57,9 +57,9 @@ class HistoryBuySell extends Component {
   }
   loadDataToRedux(props) {
     if (props.componentType === 'sell') {
-      props.getUserAuctionsSell();
+      //  props.getUserAuctionsSell();
     } else if (props.componentType === 'buy') {
-      props.getUserAuctionsBuy();
+      // props.getUserAuctionsBuy();
     }
   }
   render() {
@@ -192,10 +192,7 @@ const mapStateProps = (state) => ({
   auction: state.auction,
 });
 
-const mapActionsToProps = {
-  getUserAuctionsSell,
-  getUserAuctionsBuy,
-};
+const mapActionsToProps = {};
 export default connect(
   mapStateProps,
   mapActionsToProps

@@ -146,6 +146,7 @@ exports.updateAuction = (req, res) => {
         auctionDetails.maxBid = beforeSnap.maxBid;
         auctionDetails.approval = beforeSnap.approval;
         auctionDetails.bids = beforeSnap.bids;
+
         return res.json({
           message: {
             message: `Auction ${req.body.auctionName} updated successfully `,

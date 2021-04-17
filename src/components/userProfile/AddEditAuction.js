@@ -84,7 +84,7 @@ class AddEditAuction extends Component {
         auctionType: this.props.userAuction.auctionType,
         endDateTime: moment(
           new Date(
-            this.props.userAuction.endDateTime._seconds * 1000
+            this.props.userAuction.endDateTime.seconds * 1000
           ).toISOString()
         ),
         initAmount: this.props.userAuction.initAmount,
@@ -101,12 +101,10 @@ class AddEditAuction extends Component {
       initAmount: this.state.initAmount,
       itemDescription: this.state.itemDescription,
       buyNowAmount: this.state.buyNowAmount,
-      auctionId: this.props.userAuction.auctionId,
+      auctionId: this.props.userAuction.id,
     };
-    this.props.updateAuctionDetails(
-      updateAuctionDetails,
-      this.props.reduxIndex
-    );
+    console.log(updateAuctionDetails);
+    this.props.updateAuctionDetails(updateAuctionDetails);
   };
   render() {
     const { classes, edit } = this.props;

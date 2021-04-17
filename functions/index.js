@@ -73,50 +73,92 @@ app.post('/user', FBAuth, addUserDetails);
 app.get('/user', FBAuth, getAuthenticatedUser);
 app.post('/notifications', FBAuth, markNotificationsRead);
 
+exports.createNotificationOnDomain = functions.firestore
+  .document('auctions/{auctionId}/bids/{bidId}')
+  .onWrite((snapshot, context) => {
+    const notificaionData = {
+      createdAt: new Date(),
+      type: 'bids',
+      read: false,
+    };
+
+    return db
+      .doc(`/auctions/${context.params.auctionId}`)
+      .get()
+      .then((doc) => {
+        if (doc.data().bids > 0) {
+          notificaionData.sender = snapshot.after.data().userId;
+          notificaionData.auctionId = context.params.auctionId;
+          notificaionData.message = `New bid added ${
+            snapshot.after.data().bidAmount
+          } on ${doc.data().auctionName}`;
+          notificaionData.bidId = context.params.bidId;
+          const batch = db.batch();
+
+          console.log(doc.data().participents);
+          doc.data().participents.forEach((participent) => {
+            if (snapshot.after.data().userId != participent) {
+              notificaionData.recipient = participent;
+              console.log(snapshot.after.data().userId);
+              console.log(participent);
+              console.log(notificaionData);
+              var docRef = db.collection('notifications').doc(); //automatically generate unique id
+              batch.set(docRef, notificaionData);
+            }
+          });
+          return batch.commit();
+        } else return false;
+      })
+      .catch((err) => {
+        console.error(err);
+        return;
+      });
+  });
+
 exports.api = functions.https.onRequest(app);
 
 // exports.createNotificationOnDomain = functions.firestore
-//   .document('bids/{id}')
-//   .onWrite((snapshot) => {
-//     const notificaionData = {
-//       createdAt: new Date(),
-//       type: 'bids',
-//       read: false,
-//     };
+// .document('auctions/{auctionId}/bids/{bidId}')
+// .onWrite((snapshot) => {
+//   const notificaionData = {
+//     createdAt: new Date(),
+//     type: 'bids',
+//     read: false,
+//   };
 
-//     return db
-//       .doc(`/auctions/${snapshot.after.data().auctionId}`)
-//       .get()
-//       .then((doc) => {
-//         if (doc.data().bids > 0) {
-//           notificaionData.sender = snapshot.after.data().userId;
-//           notificaionData.auctionId = snapshot.after.data().auctionId;
-//           notificaionData.message = `New bid added ${
-//             snapshot.after.data().bidAmount
-//           } on ${doc.data().auctionName}`;
-//           notificaionData.bidId = snapshot.after.id;
-//           const batch = db.batch();
+//   return db
+//     .doc(`/auctions/${auctionId}`)
+//     .get()
+//     .then((doc) => {
+//       if (doc.data().bids > 0) {
+//         notificaionData.sender = snapshot.after.data().userId;
+//         notificaionData.auctionId = auctionId;
+//         notificaionData.message = `New bid added ${
+//           snapshot.after.data().bidAmount
+//         } on ${doc.data().auctionName}`;
+//         notificaionData.bidId = snapshot.after.id;
+//         const batch = db.batch();
 
-//           return db
-//             .collection('bids')
-//             .where('auctionId', '==', snapshot.after.data().auctionId)
-//             .where('userId', '!=', snapshot.after.data().userId)
-//             .get()
-//             .then((data) => {
-//               console.log(data);
-//               data.forEach((doc) => {
-//                 notificaionData.recipient = doc.data().userId;
-//                 console.log(doc.data().userId);
-//                 console.log(notificaionData);
-//                 var docRef = db.collection('notifications').doc(); //automatically generate unique id
-//                 batch.set(docRef, notificaionData);
-//               });
-//               return batch.commit();
+//         return db
+//           .collection('bids')
+//           .where('auctionId', '==', snapshot.after.data().auctionId)
+//           .where('userId', '!=', snapshot.after.data().userId)
+//           .get()
+//           .then((data) => {
+//             console.log(data);
+//             data.forEach((doc) => {
+//               notificaionData.recipient = doc.data().userId;
+//               console.log(doc.data().userId);
+//               console.log(notificaionData);
+//               var docRef = db.collection('notifications').doc(); //automatically generate unique id
+//               batch.set(docRef, notificaionData);
 //             });
-//         } else return false;
-//       })
-//       .catch((err) => {
-//         console.error(err);
-//         return;
-//       });
-//   });
+//             return batch.commit();
+//           });
+//       } else return false;
+//     })
+//     .catch((err) => {
+//       console.error(err);
+//       return;
+//     });
+// });

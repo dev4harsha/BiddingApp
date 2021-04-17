@@ -54,7 +54,7 @@ class App extends Component {
         <Route exact path="/terms" component={Terms} />
         <Route exact path="/contact" component={Contact} />
         <Route exact path="/UserAuth" component={UserAuth} />
-        <Route path="/auction/:auctionId/bid" component={Bid} />
+        <Route exact path="/auction/:auctionId/bid" component={Bid} />
 
         <AuthRoute path="/user" component={UserProfile} />
         {/* <AuthRoute path="/user/:auctionId/delivery" component={UserProfile} /> */}

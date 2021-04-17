@@ -1,7 +1,7 @@
 import { createStore, combineReducers, applyMiddleware, compose } from 'redux';
 import thunk from 'redux-thunk';
 import userReducer from './reducers/userReducer';
-import auctionReducer from './reducers/auctionReducer';
+
 import uiReducer from './reducers/uiReducer';
 import weblogReducer from './reducers/weblogReducer';
 import {
@@ -15,7 +15,6 @@ import {
   getFirebase,
 } from 'react-redux-firebase';
 import firebase from '../config/fbConfig';
-import fireReducer from './reducers/fireReducer';
 
 const rrfConfig = {
   userProfile: 'users',
@@ -28,12 +27,11 @@ const middleware = [thunk.withExtraArgument({ getFirestore, getFirebase })];
 
 const reducers = combineReducers({
   user: userReducer,
-  auction: auctionReducer,
+
   UI: uiReducer,
   weblog: weblogReducer,
   firestore: firestoreReducer,
   firebase: firebaseReducer,
-  fire: fireReducer,
 });
 
 const composeEnhancers =

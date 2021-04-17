@@ -59,7 +59,7 @@ class ViewAuctionPopDetails extends Component {
               {userAuction.createdAt && (
                 <Typography variant="h6">
                   {moment
-                    .unix(userAuction.createdAt._seconds)
+                    .unix(userAuction.createdAt.seconds)
                     .format('MM/DD/YYYY h:mm A')}
                 </Typography>
               )}
@@ -69,7 +69,7 @@ class ViewAuctionPopDetails extends Component {
               {userAuction.endDateTime && (
                 <Typography variant="h6">
                   {moment
-                    .unix(userAuction.endDateTime._seconds)
+                    .unix(userAuction.endDateTime.seconds)
                     .format('MM/DD/YYYY h:mm A')}
                 </Typography>
               )}

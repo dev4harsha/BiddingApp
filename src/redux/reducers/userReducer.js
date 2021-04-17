@@ -1,16 +1,34 @@
-import { SET_USER, LOADING_USER, LIKE_UNLIKE_POST } from '../types';
+import { getCurrentUserToken } from '../actions/userActions';
+import store from '../store';
+import {
+  SET_USER,
+  LOADING_USER,
+  LIKE_UNLIKE_POST,
+  GET_USER_TOKEN,
+  SET_USER_TOKEN,
+} from '../types';
 
 const initialstate = {
   loading: false,
-  credentials: {},
+
   likes: [],
   notifications: [],
+  isTokenSet: false,
 };
 
 export default function (state = initialstate, action) {
   switch (action.type) {
+    case GET_USER_TOKEN:
+      store.dispatch(getCurrentUserToken());
+      return state;
+    case SET_USER_TOKEN:
+      return {
+        ...state,
+        isTokenSet: true,
+      };
     case SET_USER:
       return {
+        ...state,
         loading: false,
         ...action.payload,
       };

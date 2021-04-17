@@ -7,6 +7,7 @@ import {
   LOADING_USER,
   SET_MESSAGES,
   GET_USER_TOKEN,
+  SET_USER_TOKEN,
 } from '../types';
 import axios from 'axios';
 import { firebaseConfig } from '../../config/fbConfig';
@@ -108,7 +109,7 @@ export const uploadImage = (formData) => (dispatch) => {
   axios
     .post('/user/image', formData)
     .then((res) => {
-      dispatch(getUserData());
+      //dispatch(getUserData());
       dispatch({ type: SET_MESSAGES, payload: res.data });
     })
     .catch((err) => console.log(err));
@@ -119,7 +120,7 @@ export const editUserDetails = (userDetails) => (dispatch) => {
   axios
     .post('/user', userDetails)
     .then((res) => {
-      dispatch(getUserData());
+      // dispatch(getUserData());
       dispatch({ type: SET_MESSAGES, payload: res.data });
     })
     .catch((err) => console.log(err));
@@ -142,8 +143,8 @@ export const getCurrentUserToken = () => (
     .currentUser.getIdToken()
     .then(function (idToken) {
       setAuthorizationHeader(idToken);
-      getUserData();
-      dispatch({ type: 'SET_USER_TOKEN' });
+      dispatch(getUserData());
+      dispatch({ type: SET_USER_TOKEN });
     })
     .catch(function (error) {
       console.log(error);

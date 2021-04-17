@@ -28,3 +28,6 @@ export const BUYER_PAYMENT_AUCTION = 'BUYER_PAYMENT_AUCTION';
 export const SET_USER_DELIVERY = 'SET_USER_DELIVERY';
 
 export const GET_USER_TOKEN = '@@reactReduxFirebase/LOGIN';
+export const SET_USER_TOKEN = 'SET_USER_TOKEN';
+export const DOC_MODIFIED = '@@reduxFirestore/DOCUMENT_MODIFIED';
+export const DOC_RESPONSE = '@@reduxFirestore/LISTENER_RESPONSE';

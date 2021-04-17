@@ -28,27 +28,24 @@ border-color: red;
 class Auction extends Component {
   state = {};
 
-  componentWillMount() {
-    this.props.getAuctions(this.props.limitAuctions || 10);
-  }
   render() {
-    const { classes } = this.props;
-    const { auctions, loading } = this.props.auction;
-    const { auctionsListPoints } = this.state;
-    const recentAuctions = loading ? (
-      <ScaleLoader
-        css={override}
-        size={150}
-        color={'#eb4034'}
-        loading={loading}
-      />
-    ) : (
-      <>
-        {auctions.map((auction) => (
-          <AuctionCommon key={auction.auctionId} auction={auction} />
-        ))}
-      </>
-    );
+    const { classes, auctions, loading } = this.props;
+
+    const recentAuctions =
+      auctions && !loading ? (
+        <>
+          {auctions.map((auction) => (
+            <AuctionCommon key={auction.id} auction={auction} />
+          ))}
+        </>
+      ) : (
+        <ScaleLoader
+          css={override}
+          size={150}
+          color={'#eb4034'}
+          loading={loading}
+        />
+      );
     return (
       <>
         <Container maxWidth="lg" className={classes.container}>
@@ -68,13 +65,21 @@ Auction.propType = {
 };
 //takes globl stats
 const mapStateProps = (state) => ({
-  auction: state.auction,
+  auctions: state.firestore.ordered.publicAuctions,
+  loading: state.firestore.status.requesting.publicAuctions,
 });
 //which action we use
-const mapActionsToProps = {
-  getAuctions,
-};
+const mapActionsToProps = {};
 export default compose(
   connect(mapStateProps, mapActionsToProps),
-  firestoreConnect([{ collection: 'auctions' }])
+  firestoreConnect([
+    {
+      collection: 'auctions',
+      where: [
+        ['approval', '==', 1],
+        ['sold', '==', 0],
+      ],
+      storeAs: 'publicAuctions',
+    },
+  ])
 )(withStyles(styles)(Auction));

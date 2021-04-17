@@ -71,7 +71,7 @@ const styles = (theme) => ({
 class AuctionCommon extends Component {
   viweAuction = (value) => {
     //this.props.history.push(/auction/:auctionId/bid"`, { postId: postId });
-    this.props.history.push(`/auction/${this.props.auction.auctionId}/bid`);
+    this.props.history.push(`/auction/${this.props.auction.id}/bid`);
   };
 
   render() {
@@ -110,7 +110,7 @@ class AuctionCommon extends Component {
               >
                 <TimerIcon className={classes.icons} />
 
-                {moment.unix(endDateTime._seconds).format('h:mm:ss A')}
+                {moment.unix(endDateTime.seconds).format('h:mm:ss A')}
               </Typography>
             </Grid>
           </Grid>

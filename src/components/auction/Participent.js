@@ -49,7 +49,7 @@ class Participent extends Component {
       >
         <Grid item>
           <Typography variant="h6" align="center">
-            {moment.unix(bidData.createdAt._seconds).format('MM/DD h:mm:ss A')}
+            {moment.unix(bidData.createdAt.seconds).format('MM/DD h:mm:ss A')}
           </Typography>
         </Grid>
 

@@ -15,6 +15,9 @@ import moment from 'moment';
 import store from '../../redux/store';
 
 import { CLEAR_AUCTION } from '../../redux/types';
+import { firestoreConnect } from 'react-redux-firebase';
+import { withRouter } from 'react-router';
+import { compose } from 'redux';
 
 const styles = (theme) => ({
   root: {},
@@ -35,25 +38,20 @@ class Bid extends Component {
     super(props);
     this.state = {};
   }
-  componentWillUnmount() {
-    store.dispatch({ type: CLEAR_AUCTION });
-  }
-  componentDidMount() {
-    this.props.getAuction(this.props.match.params.auctionId);
-  }
+
   render() {
-    const { classes } = this.props;
-    const { auction, loading } = this.props.auction;
-    let bidToAuction = auction.bidsData ? (
+    const { classes, auction, loading, bidsData } = this.props;
+
+    let bidToAuction = bidsData ? (
       <>
         <Grid container spacing={3}>
           <Grid item xs={12} sm={12} md={6} lg={6}>
-            {auction.bidsData.map((bidData) => (
-              <Participent key={bidData.bidId} bidData={bidData} />
+            {bidsData.map((bidData) => (
+              <Participent key={bidData.id} bidData={bidData} />
             ))}
           </Grid>
           <Grid item xs={12} sm={12} md={6} lg={6}>
-            <AuctionDetails />
+            <AuctionDetails auction={auction} />
           </Grid>
         </Grid>
       </>
@@ -85,12 +83,28 @@ Bid.propType = {
   auction: PropTypes.object.isRequired,
 };
 const mapStateProps = (state) => ({
-  auction: state.auction,
+  auction: state.firestore.data.publicAuction,
+  bidsData: state.firestore.ordered.bidsData,
+  loading: state.firestore.status.requesting.publicAuction,
 });
-const mapActionsToProps = {
-  getAuction,
-};
-export default connect(
-  mapStateProps,
-  mapActionsToProps
-)(withStyles(styles)(Bid));
+const mapActionsToProps = {};
+
+export default withRouter(
+  compose(
+    connect(mapStateProps, mapActionsToProps),
+    firestoreConnect((props) => [
+      {
+        collection: 'auctions',
+        doc: props.match.params.auctionId,
+        storeAs: 'publicAuction',
+      },
+      {
+        collection: 'auctions',
+        doc: props.match.params.auctionId,
+
+        subcollections: [{ collection: 'bids' }],
+        storeAs: 'bidsData',
+      },
+    ])
+  )(withStyles(styles)(Bid))
+);

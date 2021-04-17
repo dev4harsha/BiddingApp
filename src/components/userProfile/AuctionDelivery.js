@@ -1,7 +1,9 @@
 import { Button, Grid, Paper, Typography, withStyles } from '@material-ui/core';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { firestoreConnect } from 'react-redux-firebase';
 import { withRouter } from 'react-router';
+import { compose } from 'redux';
 import {
   getUserAuction,
   auctionDeliveryRequest,
@@ -43,8 +45,6 @@ class AuctionDelivery extends Component {
     }
   };
   componentDidMount() {
-    console.log(this.props);
-    this.props.getUserAuction(this.props.match.params.auctionId);
     this.setState({
       isSeller: this.props.location.state.isSeller
         ? this.props.location.state.isSeller
@@ -78,7 +78,7 @@ class AuctionDelivery extends Component {
             >
               Go Back
             </Button>
-            {isSeller ? (
+            {isSeller && auction ? (
               [0, 2].includes(auction.delivery) ? (
                 <>
                   <Button
@@ -93,7 +93,7 @@ class AuctionDelivery extends Component {
                   </Button>
                 </>
               ) : null
-            ) : isBuyer ? (
+            ) : isBuyer && auction ? (
               <>
                 {auction.delivery === 1 ? (
                   <>
@@ -129,14 +129,23 @@ class AuctionDelivery extends Component {
 }
 const mapStateProps = (state) => ({
   user: state.user,
-  auction: state.auction.auction,
+  auction: state.firestore.data.bidAuction,
   UI: state.UI,
 });
 
 const mapActionsToProps = {
-  getUserAuction,
   auctionDeliveryRequest,
 };
+
 export default withRouter(
-  connect(mapStateProps, mapActionsToProps)(withStyles(styles)(AuctionDelivery))
+  compose(
+    connect(mapStateProps, mapActionsToProps),
+    firestoreConnect((props) => [
+      {
+        collection: 'auctions',
+        doc: props.match.params.auctionId,
+        storeAs: 'bidAuction',
+      },
+    ])
+  )(withStyles(styles)(AuctionDelivery))
 );

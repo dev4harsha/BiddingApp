@@ -68,7 +68,11 @@ class AuctionDetails extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      maxBid: parseFloat(this.props.auction.auction.maxBid).toFixed(2),
+      maxBid: this.props.auction.maxBid
+        ? parseFloat(this.props.auction.maxBid).toFixed(2) > 0
+          ? parseFloat(this.props.auction.maxBid).toFixed(2)
+          : parseFloat(this.props.auction.initAmount).toFixed(2)
+        : parseFloat(this.props.auction.initAmount).toFixed(2),
     };
     this.increaseBidAmount = this.increaseBidAmount.bind(this);
     this.decreasBidAmount = this.decreasBidAmount.bind(this);
@@ -86,7 +90,7 @@ class AuctionDetails extends Component {
   };
 
   placeBid = () => {
-    if (this.props.authenticated) {
+    if (!this.props.authenticated) {
       const bidData = {
         bidAmount: this.state.maxBid,
       };
@@ -97,20 +101,20 @@ class AuctionDetails extends Component {
     }
   };
   componentDidMount() {
-    if (this.props.auction.auction.bids > 0) {
-      this.setState({
-        maxBid: parseFloat(this.props.auction.auction.maxBid).toFixed(2),
-      });
-    } else {
-      this.setState({
-        maxBid: parseFloat(this.props.auction.auction.initAmount).toFixed(2),
-      });
-    }
+    // if (this.props.auction.auction.bids > 0) {
+    //   this.setState({
+    //     maxBid: parseFloat(this.props.auction.auction.maxBid).toFixed(2),
+    //   });
+    // } else {
+    //   this.setState({
+    //     maxBid: parseFloat(this.props.auction.auction.initAmount).toFixed(2),
+    //   });
+    // }
   }
 
   render() {
-    const { classes } = this.props;
-    const { auction, loading } = this.props.auction;
+    const { classes, auction, loading } = this.props;
+
     return (
       <>
         <ToastContainer />
@@ -141,7 +145,12 @@ class AuctionDetails extends Component {
                 spacing={2}
               >
                 <Grid itemScope>
-                  <Typography variant="h4">${auction.maxBid}</Typography>
+                  <Typography variant="h4">
+                    $
+                    {this.props.auction.maxBid
+                      ? parseFloat(this.props.auction.maxBid).toFixed(2)
+                      : '0.0'}
+                  </Typography>
                 </Grid>
                 <Grid item>
                   <Typography variant="h4">Highest bid</Typography>
@@ -185,7 +194,7 @@ class AuctionDetails extends Component {
               <Typography variant="h6">
                 Auction due on{' '}
                 {moment
-                  .unix(auction.createdAt._seconds)
+                  .unix(auction.createdAt.seconds)
                   .format('MM/DD/YYYY h:mm:ss A')}
               </Typography>
             </Grid>
@@ -236,12 +245,11 @@ AuctionDetails.propType = {
   authenticated: PropTypes.bool.isRequired,
 };
 const mapStateProps = (state) => ({
-  auction: state.auction,
-  authenticated: state.user.authenticated,
+  authenticated: state.firebase.auth.isEmpty,
   UI: state.UI,
+  loading: state.firestore.status.requesting.bidsData,
 });
 const mapActionsToProps = {
-  getAuction,
   postBid,
 };
 export default connect(
